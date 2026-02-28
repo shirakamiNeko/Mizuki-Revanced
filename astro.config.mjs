@@ -167,16 +167,7 @@ export default defineConfig({
 		],
 	},
 	vite: {
-		plugins: [tailwindcss()],
-		
-		// Setting allowed host
-		preview: {
-			allowedHosts: true,
-		},
-		server: {
-			allowedHosts: true,
-		},
-		
+		plugins: [tailwindcss()],		
 		build: {
 			// 静态资源处理优化，防止小图片转 base64 导致 HTML 体积过大（可选，根据需要调整）
 			assetsInlineLimit: 4096,
