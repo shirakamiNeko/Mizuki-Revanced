@@ -19,13 +19,13 @@ import { LinkPreset } from "./types/config";
 // 移除i18n导入以避免循环依赖
 
 // 定义站点语言
-const SITE_LANG = "ja"; // 语言代码，例如：'en', 'zh_CN', 'ja' 等。
+const SITE_LANG = "zh_TW"; // 语言代码，例如：'en', 'zh_CN', 'ja' 等。
 const SITE_TIMEZONE = 8; //设置你的网站时区 from -12 to 12 default in UTC+8
 export const siteConfig: SiteConfig = {
-	title: "Mizuki",
-	subtitle: "One demo website",
-	siteURL: "https://mizuki.mysqil.com/", // 请替换为你的站点URL，以斜杠结尾
-	siteStartDate: "2025-01-01", // 站点开始运行日期，用于站点统计组件计算运行天数
+	title: "ねこの部屋",
+	subtitle: "今天喝的是芋頭鮮奶 ~(￣▽￣)~",
+	siteURL: "https://moe.lolicon.io/", // 请替换为你的站点URL，以斜杠结尾
+	siteStartDate: "2020-09-15", // 站点开始运行日期，用于站点统计组件计算运行天数
 
 	timeZone: SITE_TIMEZONE,
 
@@ -51,9 +51,9 @@ export const siteConfig: SiteConfig = {
 	// 顶栏标题配置
 	navbarTitle: {
 		// 显示模式："text-icon" 显示图标+文本，"logo" 仅显示Logo
-		mode: "logo",
+		mode: "text-icon",
 		// 顶栏标题文本
-		text: "MizukiUI",
+		text: "ねこの部屋",
 		// 顶栏标题图标路径，默认使用 public/assets/home/home.png
 		icon: "assets/home/home.png",
 		// 网站Logo图片路径
@@ -160,7 +160,7 @@ export const siteConfig: SiteConfig = {
 
 		homeText: {
 			enable: true, // 在主页显示自定义文本
-			title: "わたしの部屋", // 主页横幅主标题
+			title: "ねこの部屋", // 主页横幅主标题
 
 			subtitle: [
 				"特別なことはないけど、君がいると十分です",
@@ -359,7 +359,7 @@ export const navBarConfig: NavBarConfig = {
 
 export const profileConfig: ProfileConfig = {
 	avatar: "assets/images/avatar.webp", // 相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
-	name: "まつざか ゆき",
+	name: "白上ねこ",
 	bio: "世界は大きい、君は行かなければならない",
 	typewriter: {
 		enable: true, // 启用个人简介打字机效果
@@ -379,7 +379,7 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "GitHub",
 			icon: "fa7-brands:github",
-			url: "https://github.com/matsuzaka-yuki",
+			url: "https://github.com/shirakamiNeko",
 		},
 		{
 			name: "Codeberg",
@@ -616,7 +616,7 @@ export const sakuraConfig: SakuraConfig = {
 
 // Pio 看板娘配置
 export const pioConfig: import("./types/config").PioConfig = {
-	enable: true, // 启用看板娘
+	enable: false, // 启用看板娘
 	models: ["/pio/models/pio/model.json"], // 默认模型路径
 	position: "left", // 模型位置
 	width: 280, // 默认宽度
