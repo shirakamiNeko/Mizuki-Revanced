@@ -61,7 +61,7 @@
 /* 导入 HYTMR 字体 */
 @font-face {
   font-family: "HYTMR";
-  src: url("/assets/font/HYTMR55W.ttf") format("woff2");
+  src: url("/assets/font/HYTMR45W.ttf") format("woff2");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
