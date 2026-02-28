@@ -171,10 +171,10 @@ export default defineConfig({
 		
 		// Setting allowed host
 		preview: {
-			allowedHosts: ['moe.lolicon.io'],
+			allowedHosts: true,
 		},
 		server: {
-			allowedHosts: ['moe.lolicon.io'],
+			allowedHosts: true,
 		},
 		
 		build: {
