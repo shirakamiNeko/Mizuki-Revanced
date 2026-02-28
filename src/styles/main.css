@@ -51,8 +51,8 @@
 
 /* 导入 LXGWZhenKaiGB 字体 */
 @font-face {
-  font-family: "LXGWZhenKaiGB";
-  src: url("/assets/font/LXGWZhenKaiGB-Regular.ttf") format("woff2");
+  font-family: "LXGWWenKai";
+  src: url("/assets/font/LXGWWenKai-Regular.ttf") format("woff2");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
