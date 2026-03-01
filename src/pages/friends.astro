@@ -8,6 +8,10 @@ import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 
+// Directly import comment system from twikoo
+import Twikoo from '@components/comment/Twikoo.astro';
+import { commentConfig } from "@/config";
+
 // 检查友链页面是否启用
 if (!siteConfig.featurePages.friends) {
 	return Astro.redirect("/404/");
@@ -288,3 +292,10 @@ const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
 		transform: translateY(-1px);
 	}
 </style>
+
+<!-- Add at the bottom to force enable the comment system -->
+{commentConfig?.enable && (
+  <div class="card-base p-6 mt-6">
+    <Twikoo path="/friends" />
+  </div>
+)}
