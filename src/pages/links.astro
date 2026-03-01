@@ -25,7 +25,7 @@ const linksList = getShuffledLinksList();
 const allTags = Array.from(new Set(linksList.flatMap((item) => item.tags)));
 ---
 
-<MainGridLayout title={i18n(I18nKey.links)} description={i18n(I18nKey.links)}>
+<MainGridLayout title={i18n(I18nKey.usefulLinks)} description={i18n(I18nKey.usefulLinks)}>
 	<!-- 只在連結頁面載入腳本 -->
 	<script is:inline>
 		// 標記當前頁面為連結頁面
@@ -41,10 +41,10 @@ const allTags = Array.from(new Set(linksList.flatMap((item) => item.tags)));
 				<h1 class="text-4xl font-bold text-90 mb-2 relative
 							before:w-1 before:h-8 before:rounded-md before:bg-(--primary)
 							before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-4">
-					{i18n(I18nKey.links)}
+					{i18n(I18nKey.usefulLinks)}
 				</h1>
 				<p class="text-lg text-60">
-					{i18n(I18nKey.linksSubtitle)}
+					{i18n(I18nKey.usefulLinksSubtitle)}
 				</p>
 			</div>
 
@@ -56,7 +56,7 @@ const allTags = Array.from(new Set(linksList.flatMap((item) => item.tags)));
 						<input 
 							type="text" 
 							id="link-search"
-							placeholder={i18n(I18nKey.linksSearchPlaceholder)}
+							placeholder={i18n(I18nKey.usefulLinksSearchPlaceholder)}
 							class="w-full px-4 py-2 pl-10 rounded-lg bg-(--btn-regular-bg) 
 									text-90
 									border border-(--line-divider)
@@ -77,7 +77,7 @@ const allTags = Array.from(new Set(linksList.flatMap((item) => item.tags)));
 						class="filter-tag active"
 						data-tag="all"
 					>
-						{i18n(I18nKey.linksFilterAll)}
+						{i18n(I18nKey.usefulLinksFilterAll)}
 					</button>
 					{allTags.map(tag => (
 						<button 
@@ -168,7 +168,7 @@ const allTags = Array.from(new Set(linksList.flatMap((item) => item.tags)));
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
 											d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
 									</svg>
-									{i18n(I18nKey.linksVisit)}
+									{i18n(I18nKey.usefulLinksVisit)}
 								</a>
 								<button 
 									class="copy-link-btn px-3 py-2 rounded-lg 
@@ -177,7 +177,7 @@ const allTags = Array.from(new Set(linksList.flatMap((item) => item.tags)));
 											 active:scale-95 transition-all duration-200
 											 text-70"
 									data-url={item.siteurl}
-									title={i18n(I18nKey.linksCopyLink)}
+									title={i18n(I18nKey.usefulLinksCopyLink)}
 								>
 									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -201,7 +201,7 @@ const allTags = Array.from(new Set(linksList.flatMap((item) => item.tags)));
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
 						d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 				</svg>
-				<p class="text-black/50 dark:text-white/50 text-lg">{i18n(I18nKey.linksNoResults)}</p>
+				<p class="text-black/50 dark:text-white/50 text-lg">{i18n(I18nKey.usefulLinksNoResults)}</p>
 			</div>
 
 			<!-- 說明文件 -->
@@ -210,7 +210,7 @@ const allTags = Array.from(new Set(linksList.flatMap((item) => item.tags)));
 			</Markdown>
 			
 			<!-- 隱藏元素用於傳遞 i18n 文字到全域腳本 -->
-			<div id="links-copy-success-text" style="display: none;">{i18n(I18nKey.linksCopySuccess)}</div>
+			<div id="links-copy-success-text" style="display: none;">{i18n(I18nKey.usefulLinksCopySuccess)}</div>
 		</div>
 	</div>
 	

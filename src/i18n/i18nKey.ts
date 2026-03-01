@@ -59,14 +59,14 @@ enum I18nKey {
 	diary = "diary",
 
 	// 實用連結頁面
-	links = "links",
-	linksSubtitle = "linksSubtitle",
-	linksSearchPlaceholder = "linksSearchPlaceholder",
-	linksFilterAll = "linksFilterAll",
-	linksVisit = "linksVisit",
-	linksCopyLink = "linksCopyLink",
-	linksCopySuccess = "linksCopySuccess",
-	linksNoResults = "linksNoResults",
+	usefulLinks = "usefulLinks",
+	usefulLinksSubtitle = "usefulLinksSubtitle",
+	usefulLinksSearchPlaceholder = "usefulLinksSearchPlaceholder",
+	usefulLinksFilterAll = "usefulLinksFilterAll",
+	usefulLinksVisit = "usefulLinksVisit",
+	usefulLinksCopyLink = "usefulLinksCopyLink",
+	usefulLinksCopySuccess = "usefulLinksCopySuccess",
+	usefulLinksNoResults = "usefulLinksNoResults",
 
 	// 番剧页面
 	animeTitle = "animeTitle",
