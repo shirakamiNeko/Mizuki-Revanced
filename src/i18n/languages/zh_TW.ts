@@ -1,4 +1,4 @@
-import Key from "../Key";
+import Key from "../i18nKey";
 import type { Translation } from "../translation";
 
 export const zh_TW: Translation = {
@@ -38,13 +38,15 @@ export const zh_TW: Translation = {
 	[Key.untitled]: "無標題",
 	[Key.uncategorized]: "未分類",
 	[Key.noTags]: "無標籤",
-	[Key.linksSubtitle]: '實用網站和資源收藏',
-	[Key.linksSearchPlaceholder]: '搜尋連結或描述...',
-	[Key.linksFilterAll]: '全部',
-	[Key.linksVisit]: '造訪',
-	[Key.linksCopyLink]: '複製連結',
-	[Key.linksCopySuccess]: '已複製',
-	[Key.linksNoResults]: '找不到符合的連結',
+	
+	[Key.links]: "實用網站",
+	[Key.linksSubtitle]: "發現更多優質網站",
+	[Key.linksSearchPlaceholder]: "搜尋連結或描述...",
+	[Key.linksFilterAll]: "全部",
+	[Key.linksVisit]: "造訪",
+	[Key.linksCopyLink]: "複製連結",
+	[Key.linksCopySuccess]: "已複製",
+	[Key.linksNoResults]: "未找到符合的連結",
 	
 	[Key.wordCount]: "字",
 	[Key.wordsCount]: "字",

@@ -39,6 +39,15 @@ export const ja: Translation = {
 	[Key.uncategorized]: "未分類",
 	[Key.noTags]: "タグはありません",
 
+	[Key.links]: "便利なサイト",
+	[Key.linksSubtitle]: "もっと素敵なサイトを発見しよう",
+	[Key.linksSearchPlaceholder]: "リンクや説明を検索...",
+	[Key.linksFilterAll]: "すべて",
+	[Key.linksVisit]: "訪問",
+	[Key.linksCopyLink]: "リンクをコピー",
+	[Key.linksCopySuccess]: "コピーしました",
+	[Key.linksNoResults]: "一致するリンクが見つかりません",
+
 	[Key.wordCount]: "文字",
 	[Key.wordsCount]: "文字",
 	[Key.minuteCount]: "分",

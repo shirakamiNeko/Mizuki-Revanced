@@ -39,6 +39,15 @@ export const en: Translation = {
 	[Key.uncategorized]: "Uncategorized",
 	[Key.noTags]: "No Tags",
 
+	[Key.links]: "Useful Links",
+	[Key.linksSubtitle]: "Discover more great websites",
+	[Key.linksSearchPlaceholder]: "Search links or descriptions...",
+	[Key.linksFilterAll]: "All",
+	[Key.linksVisit]: "Visit",
+	[Key.linksCopyLink]: "Copy Link",
+	[Key.linksCopySuccess]: "Copied",
+	[Key.linksNoResults]: "No matching links found",
+
 	[Key.wordCount]: "word",
 	[Key.wordsCount]: "words",
 	[Key.minuteCount]: "minute",

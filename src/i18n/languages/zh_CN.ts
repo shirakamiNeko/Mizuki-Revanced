@@ -39,6 +39,15 @@ export const zh_CN: Translation = {
 	[Key.uncategorized]: "未分类",
 	[Key.noTags]: "无标签",
 
+	[Key.links]: "实用网站",
+	[Key.linksSubtitle]: "发现更多优质网站",
+	[Key.linksSearchPlaceholder]: "搜索链接或描述...",
+	[Key.linksFilterAll]: "全部",
+	[Key.linksVisit]: "访问",
+	[Key.linksCopyLink]: "复制链接",
+	[Key.linksCopySuccess]: "已复制",
+	[Key.linksNoResults]: "未找到匹配的链接",
+
 	[Key.wordCount]: "字",
 	[Key.wordsCount]: "字",
 	[Key.minuteCount]: "分钟",
