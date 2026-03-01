@@ -36,7 +36,7 @@ export default defineConfig({
 	trailingSlash: "always",
 
     output: "server",  // Change from "static"
-    adapter: node({
+    adapter: nodeAdapter({
       mode: "standalone"
     }),
 
