@@ -34,7 +34,10 @@ export default defineConfig({
 	base: "/",
 	trailingSlash: "always",
 
-	output: "static",
+    output: "server",  // Change from "static"
+    adapter: node({
+      mode: "standalone"
+    }),
 
 	integrations: [
 		umami({
