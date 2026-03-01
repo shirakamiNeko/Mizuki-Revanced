@@ -330,11 +330,6 @@ export const navBarConfig: NavBarConfig = {
 					url: "/friends/",
 					icon: "material-symbols:group",
 				},
-				{
-					name: "Useful Links",
-					url: "/links/",
-					icon: "mdi:web",
-				},
 			],
 		},
 		{
@@ -356,6 +351,11 @@ export const navBarConfig: NavBarConfig = {
 					name: "Timeline",
 					url: "/timeline/",
 					icon: "material-symbols:timeline",
+				},
+				{
+					name: "Useful Links",
+					url: "/links/",
+					icon: "mdi:web",
 				},
 			],
 		},
