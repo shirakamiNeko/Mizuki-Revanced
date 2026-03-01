@@ -14,13 +14,10 @@ jobs:
       run:
         working-directory: /home/neko/srv/blog/Mizuki-Revanced
     steps:
-      # In your workflow, add this step to debug:
-      - name: Debug SSH
+      - name: SSH Pre-Test
         run: |
           whoami
-          ssh -T git@github.com
-          ssh -T git@github-content
-          cat ~/.ssh/config
+          ssh -T git@github.com || true
           
       - name: Pull latest changes
         run: |
