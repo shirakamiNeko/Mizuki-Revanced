@@ -1360,12 +1360,12 @@ function disableAnimation() {
 </script>
 
 
-<!-- Change favicon when the user away from the site, or otherwise -->
+<!-- Dynamic title and favicon on tab visibility change -->
 <script>
 	const originalTitle = document.title;
-	const favicons = document.querySelectorAll('link[rel="icon"]');
+	const favicons = document.querySelectorAll<HTMLLinkElement>('link[rel="icon"]');
 	const originalHrefs = [...favicons].map(link => link.href);
-	let timeoutId = null;
+	let timeoutId: number | null = null;
 	
 	document.addEventListener('visibilitychange', () => {
 	  if (document.hidden) {
@@ -1375,7 +1375,7 @@ function disableAnimation() {
 	  } else {
 	    document.title = '(●´3｀●) 復活成功';
 	    favicons.forEach((link, i) => link.href = originalHrefs[i]);
-	    timeoutId = setTimeout(() => {
+	    timeoutId = window.setTimeout(() => {
 	      document.title = originalTitle;
 	    }, 1500);
 	  }
