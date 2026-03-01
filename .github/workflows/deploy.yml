@@ -1,26 +1,22 @@
-name: Deploy to Pages Branch
+name: Deploy to Production Server
 
 on:
-  # 每次推送到 `main` 分支时触发这个"工作流程"
-  # 如果你使用了别的分支名，请按需将 `main` 替换成你的分支名
   push:
     branches: [ main ]
-  # 允许你在 GitHub 上的 Actions 标签中手动触发此"工作流程"
   workflow_dispatch:
-
-# 需要写入权限来推送到pages分支
-permissions:
-  contents: write
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: /home/neko/srv/blog/Mizuki-Revanced
     steps:
-      - name: Checkout your repository using git
-        uses: actions/checkout@v4
-        with:
-          submodules: true  # 支持 Git Submodule 模式
-          token: ${{ secrets.GITHUB_TOKEN }}  # 自动访问同账号下的私有仓库
+      - name: Pull latest changes
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+          git submodule update --init --recursive
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -39,14 +35,9 @@ jobs:
       - name: Build site
         run: pnpm run build
         env:
-          # 如果需要启用内容分离,取消以下注释并配置
           ENABLE_CONTENT_SYNC: true
           CONTENT_REPO_URL: ${{ secrets.CONTENT_REPO_URL }}
           USE_SUBMODULE: true
       
-      - name: Deploy to pages branch
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: pages # 部署到pages分支
-          folder: dist # Astro默认构建输出目录
-          clean: true # 清理目标分支中的旧文件
+      - name: Restart server
+        run: pm2 restart astro
