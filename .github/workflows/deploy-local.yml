@@ -14,6 +14,14 @@ jobs:
       run:
         working-directory: /home/neko/srv/blog/Mizuki-Revanced
     steps:
+      # In your workflow, add this step to debug:
+      - name: Debug SSH
+        run: |
+          whoami
+          ssh -T git@github.com
+          ssh -T git@github-content
+          cat ~/.ssh/config
+          
       - name: Pull latest changes
         run: |
           git fetch origin master
