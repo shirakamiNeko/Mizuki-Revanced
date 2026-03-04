@@ -92,9 +92,14 @@ const brands = Object.keys(devices);
                   <span class="font-medium">{device.specs}</span>
                 </div>
 
-                <p class="text-sm text-60 leading-relaxed line-clamp-2">
-                  {device.description}
-                </p>
+                <div class="description-wrapper relative">
+                  <p class="text-sm text-60 leading-relaxed line-clamp-2" data-full-description={device.description}>
+                    {device.description}
+                  </p>
+                  <div class="tooltip hidden absolute z-50 left-0 right-0 bottom-full mb-2 p-3 rounded-lg bg-(--card-bg) border border-(--line-divider) shadow-lg text-sm text-75 leading-relaxed">
+                    {device.description}
+                  </div>
+                </div>
               </div>
 
               <!-- 查看详情按钮 -->
@@ -109,7 +114,58 @@ const brands = Object.keys(devices);
     </div>
   </div>
 
+  <!-- Tooltip 容器 -->
+  <div id="description-tooltip" class="fixed z-[9999] hidden max-w-sm p-4 rounded-xl bg-(--card-bg) border border-(--line-divider) shadow-xl text-sm text-75 leading-relaxed pointer-events-none">
+  </div>
+
   <script is:inline define:vars={{ devices, viewDetailsText: i18n(I18nKey.devicesViewDetails) }}>
+    // Tooltip 功能
+    const tooltip = document.getElementById('description-tooltip');
+    
+    function initTooltips() {
+      const descriptions = document.querySelectorAll('[data-full-description]');
+      
+      descriptions.forEach(desc => {
+        desc.addEventListener('mouseenter', (e) => {
+          const fullText = desc.dataset.fullDescription;
+          tooltip.textContent = fullText;
+          tooltip.classList.remove('hidden');
+          
+          // 阻止事件冒泡，避免触发卡片的链接预览
+          e.stopPropagation();
+        });
+        
+        desc.addEventListener('mousemove', (e) => {
+          const tooltipRect = tooltip.getBoundingClientRect();
+          const viewportWidth = window.innerWidth;
+          const viewportHeight = window.innerHeight;
+          
+          let x = e.clientX + 15;
+          let y = e.clientY + 15;
+          
+          // 防止 tooltip 超出右边界
+          if (x + tooltipRect.width > viewportWidth - 20) {
+            x = e.clientX - tooltipRect.width - 15;
+          }
+          
+          // 防止 tooltip 超出下边界
+          if (y + tooltipRect.height > viewportHeight - 20) {
+            y = e.clientY - tooltipRect.height - 15;
+          }
+          
+          tooltip.style.left = x + 'px';
+          tooltip.style.top = y + 'px';
+        });
+        
+        desc.addEventListener('mouseleave', () => {
+          tooltip.classList.add('hidden');
+        });
+      });
+    }
+    
+    // 初始化
+    initTooltips();
+
     const brandTabs = document.querySelectorAll('.filter-tag');
     const devicesContainer = document.getElementById('devices-container');
 
@@ -167,9 +223,11 @@ const brands = Object.keys(devices);
                   <span class="font-medium">${device.specs}</span>
                 </div>
 
-                <p class="text-sm text-60 leading-relaxed line-clamp-2">
-                  ${device.description}
-                </p>
+                <div class="description-wrapper relative">
+                  <p class="text-sm text-60 leading-relaxed line-clamp-2" data-full-description="${device.description.replace(/"/g, '&quot;')}">
+                    ${device.description}
+                  </p>
+                </div>
               </div>
 
               <!-- 查看详情按钮 -->
@@ -182,6 +240,9 @@ const brands = Object.keys(devices);
             </div>
           </a>
         `).join('');
+        
+        // 重新绑定 tooltip 事件
+        initTooltips();
       });
     });
   </script>
@@ -288,6 +349,32 @@ const brands = Object.keys(devices);
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
+    /* Description tooltip 样式 */
+    .description-wrapper [data-full-description] {
+      cursor: help;
+      position: relative;
+    }
+    
+    .description-wrapper [data-full-description]:hover {
+      color: var(--text-75);
+    }
+    
+    #description-tooltip {
+      backdrop-filter: blur(10px);
+      animation: tooltipFadeIn 0.2s ease-out;
+    }
+    
+    @keyframes tooltipFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     /* 响应式调整 */
     @media (max-width: 768px) {
       .filter-container {
@@ -306,12 +393,21 @@ const brands = Object.keys(devices);
       .device-card .p-6.pt-4 {
         padding: 1rem;
       }
+      
+      /* 移动端隐藏 tooltip，使用原生 title */
+      #description-tooltip {
+        display: none !important;
+      }
     }
 
     /* 在深色模式下微妙的阴影效果 */
     @media (prefers-color-scheme: dark) {
       .device-card:hover {
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+      
+      #description-tooltip {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       }
     }
   </style>
