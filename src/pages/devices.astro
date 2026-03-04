@@ -60,7 +60,7 @@ const brands = Object.keys(devices);
             target="_blank"
             rel="noopener noreferrer"
             class="device-card group relative overflow-hidden rounded-xl border border-(--line-divider) bg-(--card-bg) transition-all duration-300 hover:border-(--primary)/50 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-white/5 hover:scale-[1.02] hover:-translate-y-0.5 block cursor-pointer"
-            style={`animation-delay: ${index * 100}ms`}
+            style={`--delay: ${index * 100}ms`}
           >
 
             <!-- 设备图片区域 -->
@@ -93,14 +93,15 @@ const brands = Object.keys(devices);
                 </div>
 
                 <div class="description-wrapper relative">
-                  <p class="description-text text-sm text-60 leading-relaxed line-clamp-2" data-full-description={device.description}>
+                  <p class="description-text text-sm text-60 leading-relaxed line-clamp-2">
                     {device.description}
                   </p>
-                  <div class="description-tooltip hidden absolute z-50 left-0 right-0 bottom-full mb-2 p-3 rounded-lg bg-(--card-bg) border border-(--line-divider) shadow-lg text-sm text-75 leading-relaxed">
-                    <button class="tooltip-close absolute top-2 right-2 p-1 rounded-full hover:bg-(--btn-regular-bg) transition-colors">
+                  <div class="description-tooltip">
+                    <button class="tooltip-close">
                       <Icon name="material-symbols:close" class="text-base text-50" />
                     </button>
-                    <span class="tooltip-content pr-6">{device.description}</span>
+                    <span class="tooltip-content">{device.description}</span>
+                    <span class="tooltip-arrow"></span>
                   </div>
                 </div>
               </div>
@@ -118,135 +119,151 @@ const brands = Object.keys(devices);
   </div>
 
   <script is:inline define:vars={{ devices, viewDetailsText: i18n(I18nKey.devicesViewDetails) }}>
-    // Tooltip 功能
+    // Tooltip functionality
     function initTooltips() {
       const descriptions = document.querySelectorAll('.description-text');
       
       descriptions.forEach(desc => {
-        desc.addEventListener('click', (e) => {
+        // Remove old listeners by cloning
+        const newDesc = desc.cloneNode(true);
+        desc.parentNode.replaceChild(newDesc, desc);
+        
+        newDesc.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
           
-          // 先关闭所有其他 tooltip
+          // Close all other tooltips first
           document.querySelectorAll('.description-tooltip').forEach(t => {
-            if (t !== desc.nextElementSibling) {
-              t.classList.add('hidden');
+            if (t !== this.nextElementSibling) {
+              t.classList.remove('show');
             }
           });
           
-          // 切换当前 tooltip
-          const tooltip = desc.nextElementSibling;
-          tooltip.classList.toggle('hidden');
+          // Toggle current tooltip
+          const tooltip = this.nextElementSibling;
+          tooltip.classList.toggle('show');
         });
       });
       
-      // 关闭按钮
+      // Close button handlers
       document.querySelectorAll('.tooltip-close').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        
+        newBtn.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
-          btn.closest('.description-tooltip').classList.add('hidden');
+          this.closest('.description-tooltip').classList.remove('show');
         });
       });
     }
     
-    // 点击其他地方关闭 tooltip
-    document.addEventListener('click', (e) => {
+    // Click outside to close tooltip
+    document.addEventListener('click', function(e) {
       if (!e.target.closest('.description-wrapper')) {
         document.querySelectorAll('.description-tooltip').forEach(t => {
-          t.classList.add('hidden');
+          t.classList.remove('show');
         });
       }
     });
     
-    // 初始化
+    // Initialize tooltips
     initTooltips();
 
+    // Tab switching
     const brandTabs = document.querySelectorAll('.filter-tag');
     const devicesContainer = document.getElementById('devices-container');
 
     brandTabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const brand = tab.dataset.brand;
+      tab.addEventListener('click', function() {
+        const brand = this.dataset.brand;
 
-        // 移除所有激活状态
+        // Remove all active states
         brandTabs.forEach(t => {
           t.classList.remove('active');
         });
-        // 激活当前点击的标签
-        tab.classList.add('active');
+        // Activate current tab
+        this.classList.add('active');
 
         const brandDevices = devices[brand] || [];
-        devicesContainer.innerHTML = brandDevices.map((device, index) => `
-          <a
-            href="${device.link}"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="device-card group relative overflow-hidden rounded-xl border border-(--line-divider) bg-(--card-bg) transition-all duration-300 hover:border-(--primary)/50 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-white/5 hover:scale-[1.02] hover:-translate-y-0.5 block cursor-pointer"
-            style="animation-delay: ${index * 100}ms; animation: fadeInUp 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; opacity: 0;"
-          >
-            <!-- 设备图片区域 -->
-            <div class="relative p-6 pb-0">
-              <div class="flex justify-center items-center h-48 bg-linear-to-br from-(--card-bg) to-(--btn-regular-bg) rounded-lg overflow-hidden relative">
-                <div class="absolute inset-0 bg-(--primary)/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <img
-                  src="${device.image}"
-                  alt="${device.name}"
-                  class="w-auto h-full max-h-full object-contain group-hover:scale-110 transition-all duration-500 drop-shadow-md relative z-10"
-                />
-              </div>
-            </div>
-
-            <!-- 设备信息区域 -->
-            <div class="p-6 pt-4 relative z-10">
-              <div class="flex items-start justify-between mb-3">
-                <h3 class="text-lg font-bold text-90 group-hover:text-(--primary) transition-colors duration-300">
-                  ${device.name}
-                </h3>
-                <div class="p-1.5 rounded-full bg-(--primary)/10 text-(--primary) opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
+        
+        // Clear container first
+        devicesContainer.innerHTML = '';
+        
+        // Use setTimeout to ensure DOM is cleared before adding new cards
+        setTimeout(() => {
+          devicesContainer.innerHTML = brandDevices.map((device, index) => `
+            <a
+              href="${device.link}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="device-card group relative overflow-hidden rounded-xl border border-(--line-divider) bg-(--card-bg) transition-all duration-300 hover:border-(--primary)/50 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-white/5 hover:scale-[1.02] hover:-translate-y-0.5 block cursor-pointer"
+              style="--delay: ${index * 100}ms"
+            >
+              <!-- Device image area -->
+              <div class="relative p-6 pb-0">
+                <div class="flex justify-center items-center h-48 bg-linear-to-br from-(--card-bg) to-(--btn-regular-bg) rounded-lg overflow-hidden relative">
+                  <div class="absolute inset-0 bg-(--primary)/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <img
+                    src="${device.image}"
+                    alt="${device.name}"
+                    class="w-auto h-full max-h-full object-contain group-hover:scale-110 transition-all duration-500 drop-shadow-md relative z-10"
+                  />
                 </div>
               </div>
 
-              <div class="mb-4">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-(--btn-regular-bg) text-70 text-sm mb-3">
-                  <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 7.522 2.943 8.796 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                  <span class="font-medium">${device.specs}</span>
-                </div>
-
-                <div class="description-wrapper relative">
-                  <p class="description-text text-sm text-60 leading-relaxed line-clamp-2" data-full-description="${device.description.replace(/"/g, '&quot;')}">
-                    ${device.description}
-                  </p>
-                  <div class="description-tooltip hidden absolute z-50 left-0 right-0 bottom-full mb-2 p-3 rounded-lg bg-(--card-bg) border border-(--line-divider) shadow-lg text-sm text-75 leading-relaxed">
-                    <button class="tooltip-close absolute top-2 right-2 p-1 rounded-full hover:bg-(--btn-regular-bg) transition-colors">
-                      <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                    <span class="tooltip-content pr-6">${device.description}</span>
+              <!-- Device info area -->
+              <div class="p-6 pt-4 relative z-10">
+                <div class="flex items-start justify-between mb-3">
+                  <h3 class="text-lg font-bold text-90 group-hover:text-(--primary) transition-colors duration-300">
+                    ${device.name}
+                  </h3>
+                  <div class="p-1.5 rounded-full bg-(--primary)/10 text-(--primary) opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
                   </div>
                 </div>
-              </div>
 
-              <!-- 查看详情按钮 -->
-              <div class="flex items-center justify-between pt-3 border-t border-(--line-divider) border-dashed opacity-0 group-hover:opacity-100 transition-all duration-300">
-                <span class="text-sm font-medium text-(--primary)">${viewDetailsText}</span>
-                <svg class="w-5 h-5 text-(--primary)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
+                <div class="mb-4">
+                  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-(--btn-regular-bg) text-70 text-sm mb-3">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span class="font-medium">${device.specs}</span>
+                  </div>
+
+                  <div class="description-wrapper relative">
+                    <p class="description-text text-sm text-60 leading-relaxed line-clamp-2">
+                      ${device.description}
+                    </p>
+                    <div class="description-tooltip">
+                      <button class="tooltip-close">
+                        <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                      <span class="tooltip-content">${device.description}</span>
+                      <span class="tooltip-arrow"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- View details button -->
+                <div class="flex items-center justify-between pt-3 border-t border-(--line-divider) border-dashed opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  <span class="text-sm font-medium text-(--primary)">${viewDetailsText}</span>
+                  <svg class="w-5 h-5 text-(--primary)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </div>
               </div>
-            </div>
-          </a>
-        `).join('');
-        
-        // 重新绑定 tooltip 事件
-        initTooltips();
+            </a>
+          `).join('');
+          
+          // Reinitialize tooltips after DOM update
+          initTooltips();
+        }, 10);
       });
     });
   </script>
@@ -307,24 +324,25 @@ const brands = Object.keys(devices);
       box-shadow: 0 6px 16px rgba(var(--color-primary-rgb), 0.4);
     }
 
-    /* 设备卡片动画效果 */
-    @keyframes fadeInUp {
-      from {
+    /* Device card animation */
+    @keyframes cardFadeIn {
+      0% {
         opacity: 0;
         transform: translateY(20px);
       }
-      to {
+      100% {
         opacity: 1;
         transform: translateY(0);
       }
     }
 
-    .onload-animation {
-      animation: fadeInUp 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    .device-card {
       opacity: 0;
+      animation: cardFadeIn 0.5s ease-out forwards;
+      animation-delay: var(--delay, 0ms);
     }
 
-    /* 卡片内容文本截断 */
+    /* Card text truncation */
     .line-clamp-2 {
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -332,7 +350,7 @@ const brands = Object.keys(devices);
       overflow: hidden;
     }
 
-    /* 设备卡片微妙的悬停效果 */
+    /* Device card subtle hover effect */
     .device-card::after {
       content: '';
       position: absolute;
@@ -348,15 +366,14 @@ const brands = Object.keys(devices);
       opacity: 1;
     }
 
-    /* 设备名称和规格的文本样式 */
+    /* Device name text style */
     .device-card h3 {
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
-    /* Description 点击样式 */
+    /* Description click style */
     .description-text {
       cursor: pointer;
-      position: relative;
       transition: color 0.2s ease;
     }
     
@@ -364,34 +381,67 @@ const brands = Object.keys(devices);
       color: var(--text-75);
     }
     
-    .description-text::after {
-      content: '点击查看完整描述';
-      position: absolute;
-      bottom: -1.25rem;
-      left: 0;
-      font-size: 0.7rem;
-      color: var(--primary);
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      pointer-events: none;
-    }
-    
-    .description-text:hover::after {
-      opacity: 0.7;
-    }
-    
-    /* Tooltip 样式 */
+    /* Tooltip styles */
     .description-tooltip {
-      backdrop-filter: blur(10px);
-      animation: tooltipFadeIn 0.2s ease-out;
+      position: absolute;
+      z-index: 50;
+      left: 0;
+      right: 0;
+      bottom: 100%;
+      margin-bottom: 12px;
+      padding: 12px 16px;
+      padding-right: 40px;
+      border-radius: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--line-divider);
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      font-size: 14px;
+      color: var(--text-75);
+      line-height: 1.6;
+      max-height: 200px;
+      overflow-y: auto;
+      word-wrap: break-word;
+      word-break: break-word;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
     }
     
-    .description-tooltip::after {
-      content: '';
+    .description-tooltip.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .tooltip-close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 4px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .tooltip-close:hover {
+      background: var(--btn-regular-bg);
+    }
+    
+    .tooltip-content {
+      display: block;
+    }
+    
+    /* Tooltip arrow */
+    .tooltip-arrow {
       position: absolute;
       bottom: -6px;
-      left: 20px;
+      left: 24px;
       width: 12px;
       height: 12px;
       background: var(--card-bg);
@@ -399,19 +449,8 @@ const brands = Object.keys(devices);
       border-bottom: 1px solid var(--line-divider);
       transform: rotate(45deg);
     }
-    
-    @keyframes tooltipFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(5px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
 
-    /* 响应式调整 */
+    /* Responsive adjustments */
     @media (max-width: 768px) {
       .filter-container {
         gap: 0.5rem;
@@ -429,13 +468,9 @@ const brands = Object.keys(devices);
       .device-card .p-6.pt-4 {
         padding: 1rem;
       }
-      
-      .description-text::after {
-        content: '点击查看';
-      }
     }
 
-    /* 在深色模式下微妙的阴影效果 */
+    /* Dark mode shadow effects */
     @media (prefers-color-scheme: dark) {
       .device-card:hover {
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
