@@ -93,11 +93,14 @@ const brands = Object.keys(devices);
                 </div>
 
                 <div class="description-wrapper relative">
-                  <p class="text-sm text-60 leading-relaxed line-clamp-2" data-full-description={device.description}>
+                  <p class="description-text text-sm text-60 leading-relaxed line-clamp-2" data-full-description={device.description}>
                     {device.description}
                   </p>
-                  <div class="tooltip hidden absolute z-50 left-0 right-0 bottom-full mb-2 p-3 rounded-lg bg-(--card-bg) border border-(--line-divider) shadow-lg text-sm text-75 leading-relaxed">
-                    {device.description}
+                  <div class="description-tooltip hidden absolute z-50 left-0 right-0 bottom-full mb-2 p-3 rounded-lg bg-(--card-bg) border border-(--line-divider) shadow-lg text-sm text-75 leading-relaxed">
+                    <button class="tooltip-close absolute top-2 right-2 p-1 rounded-full hover:bg-(--btn-regular-bg) transition-colors">
+                      <Icon name="material-symbols:close" class="text-base text-50" />
+                    </button>
+                    <span class="tooltip-content pr-6">{device.description}</span>
                   </div>
                 </div>
               </div>
@@ -114,54 +117,47 @@ const brands = Object.keys(devices);
     </div>
   </div>
 
-  <!-- Tooltip 容器 -->
-  <div id="description-tooltip" class="fixed z-[9999] hidden max-w-sm p-4 rounded-xl bg-(--card-bg) border border-(--line-divider) shadow-xl text-sm text-75 leading-relaxed pointer-events-none">
-  </div>
-
   <script is:inline define:vars={{ devices, viewDetailsText: i18n(I18nKey.devicesViewDetails) }}>
     // Tooltip 功能
-    const tooltip = document.getElementById('description-tooltip');
-    
     function initTooltips() {
-      const descriptions = document.querySelectorAll('[data-full-description]');
+      const descriptions = document.querySelectorAll('.description-text');
       
       descriptions.forEach(desc => {
-        desc.addEventListener('mouseenter', (e) => {
-          const fullText = desc.dataset.fullDescription;
-          tooltip.textContent = fullText;
-          tooltip.classList.remove('hidden');
-          
-          // 阻止事件冒泡，避免触发卡片的链接预览
+        desc.addEventListener('click', (e) => {
+          e.preventDefault();
           e.stopPropagation();
+          
+          // 先关闭所有其他 tooltip
+          document.querySelectorAll('.description-tooltip').forEach(t => {
+            if (t !== desc.nextElementSibling) {
+              t.classList.add('hidden');
+            }
+          });
+          
+          // 切换当前 tooltip
+          const tooltip = desc.nextElementSibling;
+          tooltip.classList.toggle('hidden');
         });
-        
-        desc.addEventListener('mousemove', (e) => {
-          const tooltipRect = tooltip.getBoundingClientRect();
-          const viewportWidth = window.innerWidth;
-          const viewportHeight = window.innerHeight;
-          
-          let x = e.clientX + 15;
-          let y = e.clientY + 15;
-          
-          // 防止 tooltip 超出右边界
-          if (x + tooltipRect.width > viewportWidth - 20) {
-            x = e.clientX - tooltipRect.width - 15;
-          }
-          
-          // 防止 tooltip 超出下边界
-          if (y + tooltipRect.height > viewportHeight - 20) {
-            y = e.clientY - tooltipRect.height - 15;
-          }
-          
-          tooltip.style.left = x + 'px';
-          tooltip.style.top = y + 'px';
-        });
-        
-        desc.addEventListener('mouseleave', () => {
-          tooltip.classList.add('hidden');
+      });
+      
+      // 关闭按钮
+      document.querySelectorAll('.tooltip-close').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          btn.closest('.description-tooltip').classList.add('hidden');
         });
       });
     }
+    
+    // 点击其他地方关闭 tooltip
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.description-wrapper')) {
+        document.querySelectorAll('.description-tooltip').forEach(t => {
+          t.classList.add('hidden');
+        });
+      }
+    });
     
     // 初始化
     initTooltips();
@@ -224,9 +220,17 @@ const brands = Object.keys(devices);
                 </div>
 
                 <div class="description-wrapper relative">
-                  <p class="text-sm text-60 leading-relaxed line-clamp-2" data-full-description="${device.description.replace(/"/g, '&quot;')}">
+                  <p class="description-text text-sm text-60 leading-relaxed line-clamp-2" data-full-description="${device.description.replace(/"/g, '&quot;')}">
                     ${device.description}
                   </p>
+                  <div class="description-tooltip hidden absolute z-50 left-0 right-0 bottom-full mb-2 p-3 rounded-lg bg-(--card-bg) border border-(--line-divider) shadow-lg text-sm text-75 leading-relaxed">
+                    <button class="tooltip-close absolute top-2 right-2 p-1 rounded-full hover:bg-(--btn-regular-bg) transition-colors">
+                      <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                    <span class="tooltip-content pr-6">${device.description}</span>
+                  </div>
                 </div>
               </div>
 
@@ -349,19 +353,51 @@ const brands = Object.keys(devices);
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
-    /* Description tooltip 样式 */
-    .description-wrapper [data-full-description] {
-      cursor: help;
+    /* Description 点击样式 */
+    .description-text {
+      cursor: pointer;
       position: relative;
+      transition: color 0.2s ease;
     }
     
-    .description-wrapper [data-full-description]:hover {
+    .description-text:hover {
       color: var(--text-75);
     }
     
-    #description-tooltip {
+    .description-text::after {
+      content: '点击查看完整描述';
+      position: absolute;
+      bottom: -1.25rem;
+      left: 0;
+      font-size: 0.7rem;
+      color: var(--primary);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    
+    .description-text:hover::after {
+      opacity: 0.7;
+    }
+    
+    /* Tooltip 样式 */
+    .description-tooltip {
       backdrop-filter: blur(10px);
       animation: tooltipFadeIn 0.2s ease-out;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .description-tooltip::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 20px;
+      width: 12px;
+      height: 12px;
+      background: var(--card-bg);
+      border-right: 1px solid var(--line-divider);
+      border-bottom: 1px solid var(--line-divider);
+      transform: rotate(45deg);
     }
     
     @keyframes tooltipFadeIn {
@@ -394,9 +430,8 @@ const brands = Object.keys(devices);
         padding: 1rem;
       }
       
-      /* 移动端隐藏 tooltip，使用原生 title */
-      #description-tooltip {
-        display: none !important;
+      .description-text::after {
+        content: '点击查看';
       }
     }
 
@@ -406,7 +441,7 @@ const brands = Object.keys(devices);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       }
       
-      #description-tooltip {
+      .description-tooltip {
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       }
     }
