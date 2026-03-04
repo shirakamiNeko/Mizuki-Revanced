@@ -7,24 +7,23 @@ import { i18n } from "../i18n/translation";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 export const prerender = true;
 
-// 检查设备页面是否启用
+// Check if devices page is enabled
 if (!siteConfig.featurePages.devices) {
 	return Astro.redirect("/404/");
 }
 
-// 设备数据
+// Device data
 const devices = devicesData;
 const brands = Object.keys(devices);
 ---
 
 <MainGridLayout title={i18n(I18nKey.devices)}>
-  <!-- 引入右侧边栏布局管理器 -->
   <script>
     import('../scripts/right-sidebar-layout.js');
   </script>
   <div class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32">
     <div class="card-base z-10 px-9 py-6 relative w-full">
-      <!-- 页面标题 -->
+      <!-- Page title -->
       <div class="flex flex-col items-start justify-center mb-8">
         <h1 class="text-4xl font-bold text-90 mb-2 relative
                   before:w-1 before:h-8 before:rounded-md before:bg-(--primary)
@@ -36,7 +35,7 @@ const brands = Object.keys(devices);
         </p>
       </div>
 
-      <!-- 过滤按钮 -->
+      <!-- Filter buttons -->
       <div class="mb-6">
         <div class="filter-container flex flex-wrap gap-2">
           {brands.map((brand, index) => (
@@ -52,7 +51,7 @@ const brands = Object.keys(devices);
         </div>
       </div>
 
-      <!-- 设备列表 -->
+      <!-- Devices list -->
       <div id="devices-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {brands.length > 0 && devices[brands[0]].map((device, index) => (
           <a
@@ -62,8 +61,7 @@ const brands = Object.keys(devices);
             class="device-card group relative overflow-hidden rounded-xl border border-(--line-divider) bg-(--card-bg) transition-all duration-300 hover:border-(--primary)/50 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-white/5 hover:scale-[1.02] hover:-translate-y-0.5 block cursor-pointer"
             style={`--delay: ${index * 100}ms`}
           >
-
-            <!-- 设备图片区域 -->
+            <!-- Device image area -->
             <div class="relative p-6 pb-0">
               <div class="flex justify-center items-center h-48 bg-linear-to-br from-(--card-bg) to-(--btn-regular-bg) rounded-lg overflow-hidden relative">
                 <div class="absolute inset-0 bg-(--primary)/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -75,7 +73,7 @@ const brands = Object.keys(devices);
               </div>
             </div>
 
-            <!-- 设备信息区域 -->
+            <!-- Device info area -->
             <div class="p-6 pt-4 relative z-10">
               <div class="flex items-start justify-between mb-3">
                 <h3 class="text-lg font-bold text-90 group-hover:text-(--primary) transition-colors duration-300">
@@ -92,13 +90,13 @@ const brands = Object.keys(devices);
                   <span class="font-medium">{device.specs}</span>
                 </div>
 
-                <div class="description-wrapper relative">
+                <div class="description-wrapper">
                   <p class="description-text text-sm text-60 leading-relaxed line-clamp-2">
                     {device.description}
                   </p>
-                  <div class="description-tooltip">
-                    <button class="tooltip-close">
-                      <Icon name="material-symbols:close" class="text-base text-50" />
+                  <div class="description-tooltip" data-description={device.description}>
+                    <button type="button" class="tooltip-close">
+                      <Icon name="material-symbols:close" class="text-base" />
                     </button>
                     <span class="tooltip-content">{device.description}</span>
                     <span class="tooltip-arrow"></span>
@@ -106,7 +104,7 @@ const brands = Object.keys(devices);
                 </div>
               </div>
 
-              <!-- 查看详情按钮 -->
+              <!-- View details button -->
               <div class="flex items-center justify-between pt-3 border-t border-(--line-divider) border-dashed opacity-0 group-hover:opacity-100 transition-all duration-300">
                 <span class="text-sm font-medium text-(--primary)">{i18n(I18nKey.devicesViewDetails)}</span>
                 <Icon name="material-symbols:arrow-forward-rounded" class="text-lg text-(--primary)" />
@@ -121,53 +119,54 @@ const brands = Object.keys(devices);
   <script is:inline define:vars={{ devices, viewDetailsText: i18n(I18nKey.devicesViewDetails) }}>
     // Tooltip functionality
     function initTooltips() {
-      const descriptions = document.querySelectorAll('.description-text');
-      
-      descriptions.forEach(desc => {
-        // Remove old listeners by cloning
-        const newDesc = desc.cloneNode(true);
-        desc.parentNode.replaceChild(newDesc, desc);
+      document.querySelectorAll('.description-wrapper').forEach(wrapper => {
+        const descText = wrapper.querySelector('.description-text');
+        const tooltip = wrapper.querySelector('.description-tooltip');
+        const closeBtn = wrapper.querySelector('.tooltip-close');
         
-        newDesc.addEventListener('click', function(e) {
+        if (!descText || !tooltip) return;
+        
+        // Clone to remove old event listeners
+        const newDescText = descText.cloneNode(true);
+        descText.parentNode.replaceChild(newDescText, descText);
+        
+        newDescText.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
           
-          // Close all other tooltips first
-          document.querySelectorAll('.description-tooltip').forEach(t => {
-            if (t !== this.nextElementSibling) {
+          // Close all other tooltips
+          document.querySelectorAll('.description-tooltip.show').forEach(t => {
+            if (t !== tooltip) {
               t.classList.remove('show');
             }
           });
           
-          // Toggle current tooltip
-          const tooltip = this.nextElementSibling;
           tooltip.classList.toggle('show');
         });
-      });
-      
-      // Close button handlers
-      document.querySelectorAll('.tooltip-close').forEach(btn => {
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
         
-        newBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          this.closest('.description-tooltip').classList.remove('show');
-        });
+        if (closeBtn) {
+          const newCloseBtn = closeBtn.cloneNode(true);
+          closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+          
+          newCloseBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            tooltip.classList.remove('show');
+          });
+        }
       });
     }
     
-    // Click outside to close tooltip
+    // Click outside to close
     document.addEventListener('click', function(e) {
       if (!e.target.closest('.description-wrapper')) {
-        document.querySelectorAll('.description-tooltip').forEach(t => {
+        document.querySelectorAll('.description-tooltip.show').forEach(t => {
           t.classList.remove('show');
         });
       }
     });
     
-    // Initialize tooltips
+    // Initialize
     initTooltips();
 
     // Tab switching
@@ -178,19 +177,13 @@ const brands = Object.keys(devices);
       tab.addEventListener('click', function() {
         const brand = this.dataset.brand;
 
-        // Remove all active states
-        brandTabs.forEach(t => {
-          t.classList.remove('active');
-        });
-        // Activate current tab
+        brandTabs.forEach(t => t.classList.remove('active'));
         this.classList.add('active');
 
         const brandDevices = devices[brand] || [];
         
-        // Clear container first
         devicesContainer.innerHTML = '';
         
-        // Use setTimeout to ensure DOM is cleared before adding new cards
         setTimeout(() => {
           devicesContainer.innerHTML = brandDevices.map((device, index) => `
             <a
@@ -200,7 +193,6 @@ const brands = Object.keys(devices);
               class="device-card group relative overflow-hidden rounded-xl border border-(--line-divider) bg-(--card-bg) transition-all duration-300 hover:border-(--primary)/50 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-white/5 hover:scale-[1.02] hover:-translate-y-0.5 block cursor-pointer"
               style="--delay: ${index * 100}ms"
             >
-              <!-- Device image area -->
               <div class="relative p-6 pb-0">
                 <div class="flex justify-center items-center h-48 bg-linear-to-br from-(--card-bg) to-(--btn-regular-bg) rounded-lg overflow-hidden relative">
                   <div class="absolute inset-0 bg-(--primary)/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -212,36 +204,35 @@ const brands = Object.keys(devices);
                 </div>
               </div>
 
-              <!-- Device info area -->
               <div class="p-6 pt-4 relative z-10">
                 <div class="flex items-start justify-between mb-3">
                   <h3 class="text-lg font-bold text-90 group-hover:text-(--primary) transition-colors duration-300">
                     ${device.name}
                   </h3>
                   <div class="p-1.5 rounded-full bg-(--primary)/10 text-(--primary) opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                   </div>
                 </div>
 
                 <div class="mb-4">
                   <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-(--btn-regular-bg) text-70 text-sm mb-3">
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     <span class="font-medium">${device.specs}</span>
                   </div>
 
-                  <div class="description-wrapper relative">
+                  <div class="description-wrapper">
                     <p class="description-text text-sm text-60 leading-relaxed line-clamp-2">
                       ${device.description}
                     </p>
                     <div class="description-tooltip">
-                      <button class="tooltip-close">
-                        <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      <button type="button" class="tooltip-close">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                       </button>
                       <span class="tooltip-content">${device.description}</span>
@@ -250,18 +241,16 @@ const brands = Object.keys(devices);
                   </div>
                 </div>
 
-                <!-- View details button -->
                 <div class="flex items-center justify-between pt-3 border-t border-(--line-divider) border-dashed opacity-0 group-hover:opacity-100 transition-all duration-300">
                   <span class="text-sm font-medium text-(--primary)">${viewDetailsText}</span>
-                  <svg class="w-5 h-5 text-(--primary)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  <svg class="w-5 h-5 text-(--primary)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 7l5 5m0 0l-5 5m5-5H6" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
               </div>
             </a>
           `).join('');
           
-          // Reinitialize tooltips after DOM update
           initTooltips();
         }, 10);
       });
@@ -289,19 +278,6 @@ const brands = Object.keys(devices);
       white-space: nowrap;
       position: relative;
       overflow: hidden;
-    }
-
-    .filter-tag::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--primary);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      z-index: -1;
     }
 
     .filter-tag:hover:not(.active) {
@@ -342,7 +318,6 @@ const brands = Object.keys(devices);
       animation-delay: var(--delay, 0ms);
     }
 
-    /* Card text truncation */
     .line-clamp-2 {
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -350,7 +325,6 @@ const brands = Object.keys(devices);
       overflow: hidden;
     }
 
-    /* Device card subtle hover effect */
     .device-card::after {
       content: '';
       position: absolute;
@@ -366,12 +340,15 @@ const brands = Object.keys(devices);
       opacity: 1;
     }
 
-    /* Device name text style */
     .device-card h3 {
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
-    /* Description click style */
+    /* Description wrapper - needs relative positioning for tooltip */
+    .description-wrapper {
+      position: relative;
+    }
+
     .description-text {
       cursor: pointer;
       transition: color 0.2s ease;
@@ -381,67 +358,83 @@ const brands = Object.keys(devices);
       color: var(--text-75);
     }
     
-    /* Tooltip styles */
+    /* Tooltip - positioned ABOVE the text */
     .description-tooltip {
       position: absolute;
-      z-index: 50;
       left: 0;
       right: 0;
-      bottom: 100%;
-      margin-bottom: 12px;
+      bottom: calc(100% + 10px);
+      z-index: 100;
       padding: 12px 16px;
-      padding-right: 40px;
-      border-radius: 8px;
+      padding-right: 36px;
       background: var(--card-bg);
       border: 1px solid var(--line-divider);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
       font-size: 14px;
       color: var(--text-75);
       line-height: 1.6;
-      max-height: 200px;
+      max-height: 180px;
       overflow-y: auto;
       word-wrap: break-word;
       word-break: break-word;
+      
+      /* Hidden by default */
+      display: none;
       opacity: 0;
-      visibility: hidden;
-      transform: translateY(8px);
-      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+      transform: translateY(10px);
     }
     
     .description-tooltip.show {
+      display: block;
       opacity: 1;
-      visibility: visible;
       transform: translateY(0);
+      animation: tooltipShow 0.2s ease-out forwards;
+    }
+    
+    @keyframes tooltipShow {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     
     .tooltip-close {
       position: absolute;
       top: 8px;
       right: 8px;
-      padding: 4px;
-      border-radius: 50%;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      transition: background 0.2s ease;
+      width: 24px;
+      height: 24px;
+      padding: 0;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: transparent;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--text-50);
+      transition: background 0.2s, color 0.2s;
     }
     
     .tooltip-close:hover {
       background: var(--btn-regular-bg);
+      color: var(--text-75);
     }
     
     .tooltip-content {
       display: block;
     }
     
-    /* Tooltip arrow */
+    /* Arrow pointing DOWN (at bottom of tooltip) */
     .tooltip-arrow {
       position: absolute;
+      left: 20px;
       bottom: -6px;
-      left: 24px;
       width: 12px;
       height: 12px;
       background: var(--card-bg);
@@ -450,7 +443,7 @@ const brands = Object.keys(devices);
       transform: rotate(45deg);
     }
 
-    /* Responsive adjustments */
+    /* Responsive */
     @media (max-width: 768px) {
       .filter-container {
         gap: 0.5rem;
@@ -468,16 +461,21 @@ const brands = Object.keys(devices);
       .device-card .p-6.pt-4 {
         padding: 1rem;
       }
+      
+      .description-tooltip {
+        left: -10px;
+        right: -10px;
+      }
     }
 
-    /* Dark mode shadow effects */
+    /* Dark mode */
     @media (prefers-color-scheme: dark) {
       .device-card:hover {
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       }
       
       .description-tooltip {
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
       }
     }
   </style>
