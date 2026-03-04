@@ -123,228 +123,254 @@ const brands = Object.keys(devices);
   </div>
 
   <script is:inline define:vars={{ devices, viewDetailsText: i18n(I18nKey.devicesViewDetails) }}>
-    const globalTooltip = document.getElementById('global-tooltip');
-    const tooltipText = document.getElementById('tooltip-text');
-    const tooltipCloseBtn = document.getElementById('tooltip-close-btn');
-    const tooltipArrow = document.querySelector('.global-tooltip-arrow');
-    
-    let currentTarget = null;
-    
-    function showTooltip(target, text) {
-      currentTarget = target;
-      tooltipText.textContent = text;
+    (function() {
+      const globalTooltip = document.getElementById('global-tooltip');
+      const tooltipText = document.getElementById('tooltip-text');
+      const tooltipCloseBtn = document.getElementById('tooltip-close-btn');
+      const tooltipArrow = document.querySelector('.global-tooltip-arrow');
       
-      // Reset styles
-      globalTooltip.style.top = '0';
-      globalTooltip.style.left = '0';
-      globalTooltip.style.visibility = 'hidden';
-      globalTooltip.style.display = 'block';
-      
-      const rect = target.getBoundingClientRect();
-      const tooltipWidth = globalTooltip.offsetWidth;
-      const tooltipHeight = globalTooltip.offsetHeight;
-      
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const padding = 10;
-      
-      // Calculate horizontal position - center on target
-      let left = rect.left + (rect.width / 2) - (tooltipWidth / 2);
-      
-      // Clamp to viewport bounds
-      if (left < padding) {
-        left = padding;
-      } else if (left + tooltipWidth > viewportWidth - padding) {
-        left = viewportWidth - tooltipWidth - padding;
-      }
-      
-      // Calculate vertical position - prefer above
-      let top;
-      let showAbove = true;
-      
-      if (rect.top - tooltipHeight - 12 >= padding) {
-        // Show above
-        top = rect.top - tooltipHeight - 12;
-        showAbove = true;
-      } else if (rect.bottom + tooltipHeight + 12 <= viewportHeight - padding) {
-        // Show below
-        top = rect.bottom + 12;
-        showAbove = false;
-      } else {
-        // Not enough space, show above anyway but clamp
-        top = Math.max(padding, rect.top - tooltipHeight - 12);
-        showAbove = true;
-      }
-      
-      // Position arrow
-      if (showAbove) {
-        tooltipArrow.style.top = 'auto';
-        tooltipArrow.style.bottom = '-6px';
-        tooltipArrow.style.transform = 'rotate(45deg)';
-      } else {
-        tooltipArrow.style.top = '-6px';
-        tooltipArrow.style.bottom = 'auto';
-        tooltipArrow.style.transform = 'rotate(-135deg)';
-      }
-      
-      // Calculate arrow horizontal position
-      const targetCenterX = rect.left + (rect.width / 2);
-      let arrowLeft = targetCenterX - left - 6;
-      arrowLeft = Math.max(16, Math.min(arrowLeft, tooltipWidth - 28));
-      tooltipArrow.style.left = arrowLeft + 'px';
-      
-      // Apply position
-      globalTooltip.style.top = top + 'px';
-      globalTooltip.style.left = left + 'px';
-      globalTooltip.style.visibility = 'visible';
-      globalTooltip.classList.add('show');
-    }
-    
-    function hideTooltip() {
-      globalTooltip.classList.remove('show');
-      globalTooltip.style.display = 'none';
-      currentTarget = null;
-    }
-    
-    function initTooltips() {
-      document.querySelectorAll('.description-text').forEach(desc => {
-        // Remove existing listeners
-        const newDesc = desc.cloneNode(true);
-        desc.parentNode.replaceChild(newDesc, desc);
+      function positionTooltip(targetElement) {
+        const rect = targetElement.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
         
-        newDesc.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
+        // Reset and show to measure
+        globalTooltip.style.visibility = 'hidden';
+        globalTooltip.style.display = 'block';
+        globalTooltip.style.top = '0px';
+        globalTooltip.style.left = '0px';
+        
+        const tooltipWidth = globalTooltip.offsetWidth;
+        const tooltipHeight = globalTooltip.offsetHeight;
+        
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const padding = 12;
+        
+        // Calculate left position - align to target center
+        let left = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+        
+        // Clamp horizontal position
+        if (left < padding) {
+          left = padding;
+        }
+        if (left + tooltipWidth > viewportWidth - padding) {
+          left = viewportWidth - tooltipWidth - padding;
+        }
+        
+        // Calculate top position - try above first
+        let top;
+        let showAbove = true;
+        const spaceAbove = rect.top;
+        const spaceBelow = viewportHeight - rect.bottom;
+        
+        if (spaceAbove >= tooltipHeight + padding) {
+          // Show above
+          top = rect.top - tooltipHeight - 10;
+          showAbove = true;
+        } else if (spaceBelow >= tooltipHeight + padding) {
+          // Show below
+          top = rect.bottom + 10;
+          showAbove = false;
+        } else {
+          // Default to above, clamped
+          top = Math.max(padding, rect.top - tooltipHeight - 10);
+          showAbove = true;
+        }
+        
+        // Position the arrow
+        const targetCenterX = rect.left + (rect.width / 2);
+        let arrowLeft = targetCenterX - left - 6;
+        arrowLeft = Math.max(20, Math.min(arrowLeft, tooltipWidth - 32));
+        
+        tooltipArrow.style.left = arrowLeft + 'px';
+        
+        if (showAbove) {
+          tooltipArrow.style.bottom = '-6px';
+          tooltipArrow.style.top = 'auto';
+          tooltipArrow.style.transform = 'rotate(45deg)';
+        } else {
+          tooltipArrow.style.top = '-6px';
+          tooltipArrow.style.bottom = 'auto';
+          tooltipArrow.style.transform = 'rotate(-135deg)';
+        }
+        
+        // Apply final position
+        globalTooltip.style.top = top + 'px';
+        globalTooltip.style.left = left + 'px';
+        globalTooltip.style.visibility = 'visible';
+      }
+      
+      function showTooltip(element) {
+        const text = element.getAttribute('data-description');
+        if (!text) return;
+        
+        tooltipText.textContent = text;
+        positionTooltip(element);
+        globalTooltip.classList.add('show');
+        globalTooltip.setAttribute('data-active', 'true');
+      }
+      
+      function hideTooltip() {
+        globalTooltip.classList.remove('show');
+        globalTooltip.style.display = 'none';
+        globalTooltip.removeAttribute('data-active');
+      }
+      
+      function handleDescriptionClick(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const element = e.currentTarget;
+        const isCurrentlyActive = globalTooltip.getAttribute('data-active') === 'true';
+        const currentText = tooltipText.textContent;
+        const newText = element.getAttribute('data-description');
+        
+        // If clicking same element and tooltip is open, close it
+        if (isCurrentlyActive && currentText === newText) {
+          hideTooltip();
+        } else {
+          showTooltip(element);
+        }
+      }
+      
+      function initTooltips() {
+        const descriptions = document.querySelectorAll('.description-text');
+        descriptions.forEach(desc => {
+          // Remove old listener if any
+          desc.removeEventListener('click', handleDescriptionClick);
+          // Add new listener
+          desc.addEventListener('click', handleDescriptionClick);
+        });
+      }
+      
+      // Close button
+      tooltipCloseBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        hideTooltip();
+      });
+      
+      // Click outside to close
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.description-text') && !e.target.closest('#global-tooltip')) {
+          hideTooltip();
+        }
+      });
+      
+      // Hide on scroll
+      let scrollTimeout;
+      window.addEventListener('scroll', function() {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(hideTooltip, 50);
+      }, true);
+      
+      // Hide on resize
+      window.addEventListener('resize', hideTooltip);
+      
+      // Initialize
+      initTooltips();
+
+      // Tab switching
+      const brandTabs = document.querySelectorAll('.filter-tag');
+      const devicesContainer = document.getElementById('devices-container');
+
+      brandTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          hideTooltip();
           
-          const text = this.getAttribute('data-description');
-          if (!text) return;
+          const brand = this.dataset.brand;
+
+          brandTabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+
+          const brandDevices = devices[brand] || [];
           
-          if (currentTarget === this && globalTooltip.classList.contains('show')) {
-            hideTooltip();
-          } else {
-            showTooltip(this, text);
-          }
+          // Clear and rebuild
+          devicesContainer.innerHTML = '';
+          
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              devicesContainer.innerHTML = brandDevices.map((device, index) => `
+                <a
+                  href="${device.link}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="device-card group relative overflow-hidden rounded-xl border border-(--line-divider) bg-(--card-bg) transition-all duration-300 hover:border-(--primary)/50 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-white/5 hover:scale-[1.02] hover:-translate-y-0.5 block cursor-pointer"
+                  style="--delay: ${index * 100}ms"
+                >
+                  <div class="relative p-6 pb-0">
+                    <div class="flex justify-center items-center h-48 bg-linear-to-br from-(--card-bg) to-(--btn-regular-bg) rounded-lg overflow-hidden relative">
+                      <div class="absolute inset-0 bg-(--primary)/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <img
+                        src="${device.image}"
+                        alt="${device.name}"
+                        class="w-auto h-full max-h-full object-contain group-hover:scale-110 transition-all duration-500 drop-shadow-md relative z-10"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="p-6 pt-4 relative z-10">
+                    <div class="flex items-start justify-between mb-3">
+                      <h3 class="text-lg font-bold text-90 group-hover:text-(--primary) transition-colors duration-300">
+                        ${device.name}
+                      </h3>
+                      <div class="p-1.5 rounded-full bg-(--primary)/10 text-(--primary) opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="mb-4">
+                      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-(--btn-regular-bg) text-70 text-sm mb-3">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="font-medium">${device.specs}</span>
+                      </div>
+
+                      <p 
+                        class="description-text text-sm text-60 leading-relaxed line-clamp-2"
+                        data-description="${device.description.replace(/"/g, '&quot;').replace(/'/g, '&#39;')}"
+                      >
+                        ${device.description}
+                      </p>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-3 border-t border-(--line-divider) border-dashed opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <span class="text-sm font-medium text-(--primary)">${viewDetailsText}</span>
+                      <svg class="w-5 h-5 text-(--primary)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M13 7l5 5m0 0l-5 5m5-5H6" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+              `).join('');
+              
+              // Reinitialize tooltips after DOM update
+              initTooltips();
+            });
+          });
         });
       });
-    }
-    
-    // Close button
-    tooltipCloseBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      hideTooltip();
-    });
-    
-    // Click outside
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('.description-text') && !e.target.closest('#global-tooltip')) {
-        hideTooltip();
-      }
-    });
-    
-    // Hide on scroll/resize
-    window.addEventListener('scroll', hideTooltip, true);
-    window.addEventListener('resize', hideTooltip);
-    
-    // Init
-    initTooltips();
-
-    // Tab switching
-    const brandTabs = document.querySelectorAll('.filter-tag');
-    const devicesContainer = document.getElementById('devices-container');
-
-    brandTabs.forEach(tab => {
-      tab.addEventListener('click', function() {
-        hideTooltip();
-        
-        const brand = this.dataset.brand;
-
-        brandTabs.forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-
-        const brandDevices = devices[brand] || [];
-        
-        devicesContainer.innerHTML = '';
-        
-        requestAnimationFrame(() => {
-          devicesContainer.innerHTML = brandDevices.map((device, index) => `
-            <a
-              href="${device.link}"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="device-card group relative overflow-hidden rounded-xl border border-(--line-divider) bg-(--card-bg) transition-all duration-300 hover:border-(--primary)/50 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-white/5 hover:scale-[1.02] hover:-translate-y-0.5 block cursor-pointer"
-              style="--delay: ${index * 100}ms"
-            >
-              <div class="relative p-6 pb-0">
-                <div class="flex justify-center items-center h-48 bg-linear-to-br from-(--card-bg) to-(--btn-regular-bg) rounded-lg overflow-hidden relative">
-                  <div class="absolute inset-0 bg-(--primary)/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <img
-                    src="${device.image}"
-                    alt="${device.name}"
-                    class="w-auto h-full max-h-full object-contain group-hover:scale-110 transition-all duration-500 drop-shadow-md relative z-10"
-                  />
-                </div>
-              </div>
-
-              <div class="p-6 pt-4 relative z-10">
-                <div class="flex items-start justify-between mb-3">
-                  <h3 class="text-lg font-bold text-90 group-hover:text-(--primary) transition-colors duration-300">
-                    ${device.name}
-                  </h3>
-                  <div class="p-1.5 rounded-full bg-(--primary)/10 text-(--primary) opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="mb-4">
-                  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-(--btn-regular-bg) text-70 text-sm mb-3">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <span class="font-medium">${device.specs}</span>
-                  </div>
-
-                  <p 
-                    class="description-text text-sm text-60 leading-relaxed line-clamp-2"
-                    data-description="${device.description.replace(/"/g, '&quot;')}"
-                  >
-                    ${device.description}
-                  </p>
-                </div>
-
-                <div class="flex items-center justify-between pt-3 border-t border-(--line-divider) border-dashed opacity-0 group-hover:opacity-100 transition-all duration-300">
-                  <span class="text-sm font-medium text-(--primary)">${viewDetailsText}</span>
-                  <svg class="w-5 h-5 text-(--primary)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M13 7l5 5m0 0l-5 5m5-5H6" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-              </div>
-            </a>
-          `).join('');
-          
-          initTooltips();
-        });
-      });
-    });
+    })();
   </script>
 
   <style>
     /* Global tooltip styles */
     .global-tooltip {
       position: fixed;
-      z-index: 9999;
+      z-index: 99999;
       display: none;
-      width: 280px;
-      max-width: calc(100vw - 20px);
-      pointer-events: auto;
+      width: 300px;
+      max-width: calc(100vw - 24px);
     }
     
     .global-tooltip.show {
       display: block;
-      animation: tooltipFadeIn 0.15s ease-out;
+      animation: tooltipFadeIn 0.15s ease-out forwards;
     }
     
     @keyframes tooltipFadeIn {
@@ -361,11 +387,11 @@ const brands = Object.keys(devices);
     .global-tooltip-content {
       position: relative;
       padding: 12px 16px;
-      padding-right: 40px;
+      padding-right: 44px;
       background: var(--card-bg);
       border: 1px solid var(--line-divider);
       border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05);
       font-size: 14px;
       line-height: 1.6;
       color: var(--text-75);
@@ -377,29 +403,27 @@ const brands = Object.keys(devices);
     
     .global-tooltip-content p {
       margin: 0;
-      white-space: pre-wrap;
     }
     
     .global-tooltip-close {
       position: absolute;
-      top: 8px;
-      right: 8px;
+      top: 10px;
+      right: 10px;
       width: 24px;
       height: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: transparent;
+      background: var(--btn-regular-bg);
       border: none;
       border-radius: 4px;
       cursor: pointer;
       color: var(--text-50);
       transition: background 0.15s, color 0.15s;
-      flex-shrink: 0;
     }
     
     .global-tooltip-close:hover {
-      background: var(--btn-regular-bg);
+      background: var(--btn-hover-bg);
       color: var(--text-75);
     }
     
@@ -522,7 +546,9 @@ const brands = Object.keys(devices);
       }
       
       .global-tooltip {
-        width: calc(100vw - 20px);
+        width: calc(100vw - 24px);
+        left: 12px !important;
+        right: 12px !important;
       }
     }
 
@@ -533,7 +559,7 @@ const brands = Object.keys(devices);
       }
       
       .global-tooltip-content {
-        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 4px 32px rgba(0, 0, 0, 0.4);
       }
     }
   </style>
