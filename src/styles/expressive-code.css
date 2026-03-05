@@ -8,7 +8,7 @@
   }
 
   .title {
-    font-family: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace, sans-serif;
+    font-family: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", "Microsoft JhengHei", "微軟正黑體", "Microsoft YaHei", "微軟雅黑", "微软雅黑", sans-serif, monospace;
   }
 
   /* 复制按钮样式 (Copy Button) */
