@@ -173,9 +173,9 @@ export const zh_TW: Translation = {
 	[Key.rss]: "RSS 訂閱",
 	[Key.rssDescription]: "訂閱獲取最新更新",
 	[Key.rssSubtitle]: "透過 RSS 訂閱，第一時間獲取最新文章和動態",
-	[Key.rssLink]: "RSS 鏈接",
-	[Key.rssCopyToReader]: "複製鏈接到你的 RSS 閱讀器",
-	[Key.rssCopyLink]: "複製鏈接",
+	[Key.rssLink]: "RSS 連結",
+	[Key.rssCopyToReader]: "複製連結到你的 RSS 閱讀器",
+	[Key.rssCopyLink]: "複製連結",
 	[Key.rssLatestPosts]: "最新文章",
 	[Key.rssWhatIsRSS]: "什麼是 RSS？",
 	[Key.rssWhatIsRSSDescription]:
@@ -186,16 +186,16 @@ export const zh_TW: Translation = {
 	[Key.rssBenefit4]: "享受無廣告的純淨閱讀經驗",
 	[Key.rssHowToUse]:
 		"推薦使用 Feedly、Inoreader 或其他 RSS 閱讀器來訂閱本站。",
-	[Key.rssCopied]: "RSS 鏈接已複製到剪貼板！",
-	[Key.rssCopyFailed]: "複製失敗，請手動複製鏈接",
+	[Key.rssCopied]: "RSS 連結已複製到剪貼板！",
+	[Key.rssCopyFailed]: "複製失敗，請手動複製連結",
 
 	//Atom Feed 頁面
 	[Key.atom]: "Atom 訂閱",
 	[Key.atomDescription]: "訂閱獲取最新更新",
 	[Key.atomSubtitle]: "透過 Atom 訂閱，第一時間獲取最新文章和動態",
-	[Key.atomLink]: "Atom 鏈接",
-	[Key.atomCopyToReader]: "複製鏈接到你的 Atom 閱讀器",
-	[Key.atomCopyLink]: "複製鏈接",
+	[Key.atomLink]: "Atom 連結",
+	[Key.atomCopyToReader]: "複製連結到你的 Atom 閱讀器",
+	[Key.atomCopyLink]: "複製連結",
 	[Key.atomLatestPosts]: "最新文章",
 	[Key.atomWhatIsAtom]: "什麼是 Atom？",
 	[Key.atomWhatIsAtomDescription]:
@@ -206,8 +206,8 @@ export const zh_TW: Translation = {
 	[Key.atomBenefit4]: "享受無廣告的純淨閱讀經驗",
 	[Key.atomHowToUse]:
 		"推薦使用 Feedly、Inoreader 或其他 Atom 閱讀器來訂閱本站。",
-	[Key.atomCopied]: "Atom 鏈接已複製到剪貼板！",
-	[Key.atomCopyFailed]: "複製失敗，請手動複製鏈接",
+	[Key.atomCopied]: "Atom 連結已複製到剪貼板！",
+	[Key.atomCopyFailed]: "複製失敗，請手動複製連結",
 
 	// 技能展示頁面
 	[Key.skills]: "技能展示",

@@ -102,6 +102,9 @@ const recentPosts = posts.slice(0, 6);
     </div>
 
     <script >
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+
         // Copy button functionality
         const init = () => {
             const copyBtn = document.getElementById('copy-atom-btn');
@@ -111,14 +114,14 @@ const recentPosts = posts.slice(0, 6);
                     if (url) {
                         navigator.clipboard.writeText(url).then(() => {
                             const originalText = this.textContent || "Copy Link";
-                            this.textContent = "Atom link copied to clipboard!";
+                            this.textContent = i18n(I18nKey.atomCopied) || "Atom link copied to clipboard!";
                             setTimeout(() => {
                                 this.textContent = originalText;
                             }, 2000);
                         }).catch(err => {
                             console.error('复制失败:', err);
                             const originalText = this.textContent || "Copy Link";
-                            this.textContent = "Copy failed, please copy the link manually";
+                            this.textContent = i18n(I18nKey.atomCopyFailed) || "Copy failed, please copy the link manually";
                             setTimeout(() => {
                                 this.textContent = originalText;
                             }, 2000);
