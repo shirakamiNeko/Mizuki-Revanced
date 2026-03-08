@@ -40,6 +40,11 @@ const lastModified = dayjs(licensePost.data.updated || licensePost.data.publishe
                     {title}
                 </h1>
             </div>
+
+            <!-- 從 MD 檔案讀取的內容 -->
+            <Markdown class="mt-2">
+                <Content />
+            </Markdown>
             
             <!-- 最後修改時間卡片 -->
             {siteConfig.showLastModified && (
@@ -131,10 +136,6 @@ const lastModified = dayjs(licensePost.data.updated || licensePost.data.publishe
                 </>
             )}
             
-            <!-- 從 MD 檔案讀取的內容 -->
-            <Markdown class="mt-2">
-                <Content />
-            </Markdown>
         </div>
     </div>
 </MainGridLayout>

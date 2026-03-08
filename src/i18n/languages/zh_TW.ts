@@ -38,7 +38,7 @@ export const zh_TW: Translation = {
 	[Key.untitled]: "無標題",
 	[Key.uncategorized]: "未分類",
 	[Key.noTags]: "無標籤",
-	
+
 	[Key.usefulLinks]: "實用網站",
 	[Key.usefulLinksSubtitle]: "發現更多優質網站",
 	[Key.usefulLinksSearchPlaceholder]: "搜尋連結或描述...",
@@ -47,7 +47,7 @@ export const zh_TW: Translation = {
 	[Key.usefulLinksCopyLink]: "複製連結",
 	[Key.usefulLinksCopySuccess]: "已複製",
 	[Key.usefulLinksNoResults]: "未找到符合的連結",
-	
+
 	[Key.wordCount]: "字",
 	[Key.wordsCount]: "字",
 	[Key.minuteCount]: "分鐘",
@@ -65,7 +65,7 @@ export const zh_TW: Translation = {
 
 	[Key.author]: "作者",
 	[Key.publishedAt]: "發布於",
-	[Key.license]: "許可協議",
+	[Key.license]: "授權條款",
 	[Key.anime]: "追番",
 	[Key.diary]: "日記",
 
@@ -352,6 +352,6 @@ export const zh_TW: Translation = {
 	[Key.switchToListMode]: "切換到列表模式",
 
 	// DevTools檢測
-	[Key.devtoolsMessage]: '開發者模式已開啟，請遵守GPL授權條款。',
-	[Key.devtoolsLinkText]: '查看授權聲明',
+	[Key.devtoolsMessage]: "開發者模式已開啟，請遵守GPL授權條款。",
+	[Key.devtoolsLinkText]: "查看授權聲明",
 };
