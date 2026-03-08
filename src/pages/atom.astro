@@ -118,6 +118,7 @@ import { i18n } from "@i18n/translation";
                             this.style.backgroundColor = 'var(--success-color, #10b981)';
                             setTimeout(() => {
                                 this.textContent = originalText;
+                                this.style.backgroundColor = '';
                             }, 2000);
                         }).catch(err => {
                             console.error('复制失败:', err);
