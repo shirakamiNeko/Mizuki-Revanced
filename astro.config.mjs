@@ -28,7 +28,7 @@ import { remarkContent } from "./src/plugins/remark-content.mjs";
 import { rehypeImageWidth } from "./src/plugins/rehype-image-width.mjs";
 import rehypeExternalLinks from "rehype-external-links";
 import { remarkFixGithubAdmonitions } from "./src/plugins/remark-fix-github-admonitions.js";
-import { KbdComponent } from "./src/plugins/rehype-component-kbd.js";
+import { KeyboardComponent } from "./src/plugins/rehype-component-keyboard.js";
 
 // https://astro.build/config
 export default defineConfig({
@@ -146,7 +146,7 @@ export default defineConfig({
 				{
 					components: {
 						github: GithubCardComponent,
-						kbd: KbdComponent,
+						keyboard: KeyboardComponent,
 						note: (x, y) => AdmonitionComponent(x, y, "note"),
 						tip: (x, y) => AdmonitionComponent(x, y, "tip"),
 						important: (x, y) =>

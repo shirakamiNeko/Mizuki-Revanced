@@ -6,9 +6,9 @@ import { h } from "hastscript";
  *
  * @param {Object} properties - The properties of the component.
  * @param {import('mdast').RootContent[]} children - The children elements.
- * @returns {import('mdast').Parent} The created Kbd component.
+ * @returns {import('mdast').Parent} The created Keyboard component.
  */
-export function KbdComponent(properties, children) {
+export function KeyboardComponent(properties, children) {
 	const keyText =
 		properties.key ||
 		(Array.isArray(children) && children.length > 0
@@ -17,9 +17,9 @@ export function KbdComponent(properties, children) {
 
 	if (!keyText) {
 		return h("span", { class: "hidden" }, [
-			"Invalid directive. (Usage: :kbd[Win])",
+			"Invalid directive. (Usage: :keyboard[Win])",
 		]);
 	}
 
-	return h("kbd", {}, keyText);
+	return h("keyboard", {}, keyText);
 }
