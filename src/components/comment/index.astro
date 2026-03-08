@@ -1,29 +1,29 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import { commentConfig } from "@/config";
-import { removeFileExtension } from "@/utils/url-utils";
 import Twikoo from "./Twikoo.astro";
 
 interface Props {
-	post: CollectionEntry<"posts">;
+    post?: CollectionEntry<"posts">;
 }
 
-const { id, data } = Astro.props.post;
+const { post } = Astro.props;
 
-const slug = removeFileExtension(id);
-const path = `/posts/${slug}`;
-// const url = `${Astro.site?.href}${path}`;
+// 自動獲取當前頁面路徑, 移除結尾的 /
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
 let commentService = "";
 if (commentConfig?.enable && commentConfig?.twikoo) {
-	commentService = "twikoo";
+    commentService = "twikoo";
 }
 
-const commentEnabled = data.comment ?? true;
+// post 頁面檢查 frontmatter，其他頁面預設啟用
+const commentEnabled = post?.data.comment ?? true;
 ---
+
 {commentConfig?.enable && commentEnabled && (
-  <div class="card-base p-6 mb-4">
-    {commentService === 'twikoo' && <Twikoo path={path} />}
-    {commentService === '' && null}
-  </div>
+    <div class="card-base p-6 mb-4">
+        {commentService === 'twikoo' && <Twikoo path={path} />}
+        {commentService === '' && null}
+    </div>
 )}
