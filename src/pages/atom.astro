@@ -115,6 +115,7 @@ import { i18n } from "@i18n/translation";
                         navigator.clipboard.writeText(url).then(() => {
                             const originalText = this.textContent || "Copy Link";
                             this.textContent = i18n(I18nKey.atomCopied) || "Atom link copied to clipboard!";
+                            this.style.backgroundColor = 'var(--success-color, #10b981)';
                             setTimeout(() => {
                                 this.textContent = originalText;
                             }, 2000);
