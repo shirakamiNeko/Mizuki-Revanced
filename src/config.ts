@@ -387,15 +387,15 @@ export const profileConfig: ProfileConfig = {
 			url: "https://github.com/shirakamiNeko",
 		},
 		{
-			name: "Google For Developers",
-			icon: "fa7-brands:google",
-			url: "https://developers.google.com/",
-		},
-		{
 			name: "Discord",
 			icon: "fa7-brands:discord",
 			url: "https://discord.com/users/885756325798227988",
 		},
+		{
+			name: "RSS",
+			icon: "mdi:rss",
+			url: "/rss",
+		}
 	],
 };
 
