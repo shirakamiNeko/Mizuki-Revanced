@@ -1,0 +1,24 @@
+ruby {
+  ruby-align: center;
+}
+
+ruby rt {
+  font-size: 0.5em;
+  font-weight: normal;
+  color: var(--text-secondary, #6b7280);
+}
+
+ruby rp {
+  color: var(--text-tertiary, #9ca3af);
+}
+
+/* Emphasis dots style */
+ruby rt:only-child {
+  font-size: 0.6em;
+}
+
+/* Dark mode */
+[data-theme="dark"] ruby rt,
+.dark ruby rt {
+  color: #9ca3af;
+}
