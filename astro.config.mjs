@@ -122,6 +122,7 @@ export default defineConfig({
 	],
 	markdown: {
 		remarkPlugins: [
+			remarkTabs,
 			remarkMath,
 			remarkContent,
 			remarkFixGithubAdmonitions,
@@ -129,7 +130,6 @@ export default defineConfig({
 			remarkSectionize,
 			parseDirectiveNode,
 			remarkMermaid,
-			remarkTabs,
 		],
 		rehypePlugins: [
 			rehypeKatex,
