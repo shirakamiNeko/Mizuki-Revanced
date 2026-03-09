@@ -1,0 +1,10 @@
+.colored-text {
+  font-weight: inherit;
+  transition: color 0.2s ease;
+}
+
+/* Optional: add slight text shadow for better readability */
+[data-theme="dark"] .colored-text,
+.dark .colored-text {
+  text-shadow: 0 0 1px currentColor;
+}

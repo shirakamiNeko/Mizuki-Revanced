@@ -31,6 +31,7 @@ import { remarkFixGithubAdmonitions } from "./src/plugins/remark-fix-github-admo
 import { KeyboardComponent } from "./src/plugins/rehype-component-keyboard.js";
 import remarkTabs from './src/plugins/remark-tabs.js';
 import remarkHighlight from "./src/plugins/remark-highlight.js";
+import remarkColoredText from "./src/plugins/remark-colored-text.js";
 
 
 // https://astro.build/config
@@ -130,8 +131,9 @@ export default defineConfig({
 			remarkSectionize,
 			parseDirectiveNode,
 			remarkMermaid,
-			remarkTabs,
+			remarkTabs,  // Our custom plugin starts here
 			remarkHighlight,
+			remarkColoredText,
 		],
 		rehypePlugins: [
 			rehypeKatex,
