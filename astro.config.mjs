@@ -124,12 +124,12 @@ export default defineConfig({
 		remarkPlugins: [
 			remarkMath,
 			remarkContent,
-			remarkDirective,
-			parseDirectiveNode,
-			remarkTabs,
 			remarkFixGithubAdmonitions,
+			remarkDirective,
 			remarkSectionize,
+			parseDirectiveNode,
 			remarkMermaid,
+			remarkTabs,
 		],
 		rehypePlugins: [
 			rehypeKatex,
