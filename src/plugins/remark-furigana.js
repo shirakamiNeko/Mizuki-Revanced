@@ -1,6 +1,5 @@
 import { visit } from 'unist-util-visit';
 
-// Character type detection
 function isHiragana(char) {
   const code = char.charCodeAt(0);
   return code >= 0x3040 && code <= 0x309f;
@@ -18,8 +17,8 @@ function isKana(char) {
 function isKanji(char) {
   const code = char.charCodeAt(0);
   return (
-    (code >= 0x4e00 && code <= 0x9faf) || // CJK Unified Ideographs
-    (code >= 0x3400 && code <= 0x4dbf)    // CJK Unified Ideographs Extension A
+    (code >= 0x4e00 && code <= 0x9faf) ||
+    (code >= 0x3400 && code <= 0x4dbf)
   );
 }
 
@@ -34,9 +33,8 @@ function escapeHtml(text) {
   return String(text).replace(/[&<>"']/g, (m) => map[m]);
 }
 
-// Parse furigana with separators
 function parseFurigana(text, reading) {
-  // Handle emphasis dots: [あいう]{*} or [あいう]{*❤}
+  // Emphasis dots: [すごい]{*} or [あいう]{*❤}
   if (reading.startsWith('*') || reading.startsWith('＊')) {
     const dot = reading.slice(1) || '・';
     return [...text].map(char => ({
@@ -45,7 +43,7 @@ function parseFurigana(text, reading) {
     }));
   }
 
-  // Handle literal mode: [食べる]{=たべる}
+  // Literal mode: [食べる]{=たべる}
   if (reading.startsWith('=') || reading.startsWith('＝')) {
     return [{
       text: text,
@@ -53,176 +51,143 @@ function parseFurigana(text, reading) {
     }];
   }
 
-  // Separators split furigana between kanji
-  const separators = /[.．。・|｜/／\s]/;
-  // Combinators indicate boundary but don't split in output
-  const combinators = /[+＋]/;
+  // Check for separators
+  const separatorRegex = /[.．。・|｜/／]/;
+  const hasSeparators = separatorRegex.test(reading);
 
-  const readingParts = [];
-  let currentPart = '';
-  let combineWithPrevious = false;
-
-  for (const char of reading) {
-    if (separators.test(char)) {
-      if (currentPart) {
-        readingParts.push({ text: currentPart, combine: combineWithPrevious });
-        currentPart = '';
-        combineWithPrevious = false;
-      }
-    } else if (combinators.test(char)) {
-      if (currentPart) {
-        readingParts.push({ text: currentPart, combine: combineWithPrevious });
-        currentPart = '';
-        combineWithPrevious = true;
-      }
-    } else {
-      currentPart += char;
-    }
-  }
-  if (currentPart) {
-    readingParts.push({ text: currentPart, combine: combineWithPrevious });
+  if (hasSeparators) {
+    return parseWithSeparators(text, reading);
   }
 
-  // If no separators, try automatic matching
-  if (readingParts.length <= 1) {
-    return autoMatch(text, reading);
-  }
-
-  // Match parts to text segments
-  return matchPartsToText(text, readingParts);
+  // No separators - simple mode
+  return simpleMatch(text, reading);
 }
 
-// Automatic matching of kanji to kana
-function autoMatch(text, reading) {
+function parseWithSeparators(text, reading) {
+  // Split reading by separators
+  const readingParts = reading.split(/[.．。・|｜/／]/).filter(p => p.length > 0);
+  
+  // Find kanji groups in text
+  const segments = [];
+  let current = '';
+  let currentIsKanji = null;
+
+  for (const char of text) {
+    const charIsKanji = isKanji(char);
+    const charIsKana = isKana(char);
+
+    if (currentIsKanji === null) {
+      current = char;
+      currentIsKanji = charIsKanji;
+    } else if (charIsKanji && currentIsKanji) {
+      current += char;
+    } else if (charIsKana && !currentIsKanji) {
+      current += char;
+    } else {
+      segments.push({ text: current, isKanji: currentIsKanji });
+      current = char;
+      currentIsKanji = charIsKanji;
+    }
+  }
+  if (current) {
+    segments.push({ text: current, isKanji: currentIsKanji });
+  }
+
+  // Match reading parts to kanji segments
   const results = [];
-  let textIndex = 0;
   let readingIndex = 0;
 
-  while (textIndex < text.length) {
-    const char = text[textIndex];
+  for (const segment of segments) {
+    if (segment.isKanji) {
+      // Each kanji character gets a reading part
+      for (const char of segment.text) {
+        const readingPart = readingParts[readingIndex] || '';
+        results.push({ text: char, reading: readingPart || null });
+        readingIndex++;
+      }
+    } else {
+      // Kana passes through without reading
+      results.push({ text: segment.text, reading: null });
+    }
+  }
+
+  return results;
+}
+
+function simpleMatch(text, reading) {
+  // Check if text contains any kanji
+  const hasKanji = [...text].some(isKanji);
+
+  if (!hasKanji) {
+    // No kanji - apply reading to whole text (e.g., [cat]{ねこ})
+    return [{ text, reading }];
+  }
+
+  // Simple case: all kanji, apply reading to whole thing
+  const allKanji = [...text].every(isKanji);
+  if (allKanji) {
+    return [{ text, reading }];
+  }
+
+  // Mixed kanji and kana - try to match
+  return matchMixed(text, reading);
+}
+
+function matchMixed(text, reading) {
+  const results = [];
+  let textIdx = 0;
+  let readingIdx = 0;
+
+  while (textIdx < text.length) {
+    const char = text[textIdx];
 
     if (isKana(char)) {
-      // Kana matches itself
-      const kanaRun = getKanaRun(text, textIndex);
+      // Collect consecutive kana
+      let kanaRun = '';
+      while (textIdx < text.length && isKana(text[textIdx])) {
+        kanaRun += text[textIdx];
+        textIdx++;
+        readingIdx++; // Skip corresponding reading chars
+      }
       results.push({ text: kanaRun, reading: null });
-      textIndex += kanaRun.length;
-      readingIndex += kanaRun.length;
     } else if (isKanji(char)) {
-      // Find kanji run
-      const kanjiRun = getKanjiRun(text, textIndex);
-      // Find where next kana starts in reading
-      const nextKanaInText = findNextKana(text, textIndex + kanjiRun.length);
-      
+      // Collect consecutive kanji
+      let kanjiRun = '';
+      while (textIdx < text.length && isKanji(text[textIdx])) {
+        kanjiRun += text[textIdx];
+        textIdx++;
+      }
+
+      // Find where the next kana in text appears in reading
       let kanjiReading;
-      if (nextKanaInText) {
-        // Find this kana in reading
-        const kanaPos = reading.indexOf(nextKanaInText, readingIndex);
-        if (kanaPos > readingIndex) {
-          kanjiReading = reading.slice(readingIndex, kanaPos);
-          readingIndex = kanaPos;
+      if (textIdx < text.length && isKana(text[textIdx])) {
+        // Look for this kana sequence in reading
+        const nextKana = text[textIdx];
+        const kanaPos = reading.indexOf(nextKana, readingIdx);
+        if (kanaPos > readingIdx) {
+          kanjiReading = reading.slice(readingIdx, kanaPos);
+          readingIdx = kanaPos;
         } else {
-          kanjiReading = reading.slice(readingIndex);
-          readingIndex = reading.length;
+          kanjiReading = reading.slice(readingIdx);
+          readingIdx = reading.length;
         }
       } else {
-        kanjiReading = reading.slice(readingIndex);
-        readingIndex = reading.length;
+        // No more kana, take rest of reading
+        kanjiReading = reading.slice(readingIdx);
+        readingIdx = reading.length;
       }
 
       results.push({ text: kanjiRun, reading: kanjiReading });
-      textIndex += kanjiRun.length;
     } else {
-      // Other characters (punctuation, etc)
+      // Other characters
       results.push({ text: char, reading: null });
-      textIndex++;
+      textIdx++;
     }
   }
 
   return results;
 }
 
-function getKanaRun(text, start) {
-  let end = start;
-  while (end < text.length && isKana(text[end])) {
-    end++;
-  }
-  return text.slice(start, end);
-}
-
-function getKanjiRun(text, start) {
-  let end = start;
-  while (end < text.length && isKanji(text[end])) {
-    end++;
-  }
-  return text.slice(start, end);
-}
-
-function findNextKana(text, start) {
-  for (let i = start; i < text.length; i++) {
-    if (isKana(text[i])) {
-      return getKanaRun(text, i);
-    }
-  }
-  return null;
-}
-
-function matchPartsToText(text, readingParts) {
-  const results = [];
-  let textIndex = 0;
-  let partIndex = 0;
-
-  while (textIndex < text.length && partIndex < readingParts.length) {
-    const char = text[textIndex];
-
-    if (isKana(char)) {
-      const kanaRun = getKanaRun(text, textIndex);
-      results.push({ text: kanaRun, reading: null });
-      textIndex += kanaRun.length;
-    } else if (isKanji(char)) {
-      let kanjiRun = '';
-      let combinedReading = '';
-
-      // Collect kanji and their readings, respecting combinators
-      do {
-        const part = readingParts[partIndex];
-        if (!part) break;
-
-        if (partIndex > 0 && readingParts[partIndex].combine) {
-          // Combine with previous
-          kanjiRun += text[textIndex] || '';
-          combinedReading += part.text;
-        } else if (kanjiRun === '') {
-          kanjiRun = getKanjiRun(text, textIndex);
-          combinedReading = part.text;
-        } else {
-          break;
-        }
-
-        textIndex++;
-        partIndex++;
-      } while (partIndex < readingParts.length && readingParts[partIndex]?.combine);
-
-      // Adjust textIndex if we grabbed too much
-      if (kanjiRun.length > 1) {
-        textIndex = textIndex - 1 + kanjiRun.length;
-      }
-
-      results.push({ text: kanjiRun, reading: combinedReading });
-    } else {
-      results.push({ text: char, reading: null });
-      textIndex++;
-    }
-  }
-
-  // Remaining text
-  if (textIndex < text.length) {
-    results.push({ text: text.slice(textIndex), reading: null });
-  }
-
-  return results;
-}
-
-// Generate ruby HTML
 function generateRuby(parts, fallbackParens = '【】') {
   const openParen = fallbackParens[0] || '【';
   const closeParen = fallbackParens[1] || '】';
@@ -242,13 +207,11 @@ export function remarkFurigana(options = {}) {
     visit(tree, 'text', (node, index, parent) => {
       if (!parent || index === null) return;
 
-      // Match [text]{reading}
       const furiganaRegex = /\[([^\]]+)\]\{([^}]+)\}/g;
       const text = node.value;
 
       if (!furiganaRegex.test(text)) return;
 
-      // Reset regex
       furiganaRegex.lastIndex = 0;
 
       const children = [];
@@ -256,7 +219,6 @@ export function remarkFurigana(options = {}) {
       let match;
 
       while ((match = furiganaRegex.exec(text)) !== null) {
-        // Text before match
         if (match.index > lastIndex) {
           children.push({
             type: 'text',
@@ -277,7 +239,6 @@ export function remarkFurigana(options = {}) {
         lastIndex = match.index + match[0].length;
       }
 
-      // Text after last match
       if (lastIndex < text.length) {
         children.push({
           type: 'text',
@@ -285,7 +246,6 @@ export function remarkFurigana(options = {}) {
         });
       }
 
-      // Replace node with children
       parent.children.splice(index, 1, ...children);
     });
   };
