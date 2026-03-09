@@ -3,7 +3,7 @@ ruby {
 }
 
 ruby rt {
-  font-size: 0.5em;
+  font-size: 0.7em;
   font-weight: normal;
   color: var(--text-secondary, #6b7280);
 }
@@ -14,7 +14,7 @@ ruby rp {
 
 /* Emphasis dots style */
 ruby rt:only-child {
-  font-size: 0.6em;
+  font-size: 0.7em;
 }
 
 /* Dark mode */
