@@ -51,6 +51,15 @@ function parseFurigana(text, reading) {
     }];
   }
 
+  // Combined mode: [可愛い犬]{か+わいいいぬ} → whole text gets combined reading
+  if (reading.includes('+') || reading.includes('＋')) {
+    const combinedReading = reading.replaceAll('+', '').replaceAll('＋', '');
+    return [{
+      text: text,
+      reading: combinedReading
+    }];
+  }
+
   // Check for separators
   const separatorRegex = /[.．。・|｜/／]/;
   const hasSeparators = separatorRegex.test(reading);
