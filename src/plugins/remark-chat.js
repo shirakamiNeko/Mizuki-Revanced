@@ -5,55 +5,43 @@ export function remarkChat() {
     visit(tree, 'containerDirective', (node) => {
       if (node.name !== 'chat') return;
 
-      const messages = [];
-      let currentMessage = null;
-
-      for (const child of node.children) {
-        if (child.type === 'paragraph' && child.children) {
-          for (const inline of child.children) {
-            if (inline.type === 'text') {
-              const lines = inline.value.split('\n');
-              
-              for (const line of lines) {
-                const trimmed = line.trim();
-                if (!trimmed) continue;
-                
-                // Check if it's a header line [name|time|position]
-                const headerMatch = trimmed.match(/^\[([^\]]+)\](.*)$/);
-                
-                if (headerMatch) {
-                  // Save previous message
-                  if (currentMessage) {
-                    messages.push(currentMessage);
-                  }
-                  
-                  const headerParts = headerMatch[1].split('|').map(s => s.trim());
-                  
-                  currentMessage = {
-                    name: headerParts[0] || 'Anonymous',
-                    datetime: headerParts[1] || '',
-                    position: (headerParts[2] || 'left').toLowerCase() === 'right' ? 'right' : 'left',
-                    lines: []
-                  };
-                  
-                  // Content after header on same line
-                  const afterHeader = headerMatch[2].trim();
-                  if (afterHeader) {
-                    currentMessage.lines.push(afterHeader);
-                  }
-                } else if (currentMessage) {
-                  // Regular content line
-                  currentMessage.lines.push(trimmed);
-                }
-              }
-            }
-          }
-        }
-      }
+      // 收集所有文字內容
+      let fullText = '';
       
-      // Don't forget last message
-      if (currentMessage) {
-        messages.push(currentMessage);
+      const collectText = (n) => {
+        if (n.type === 'text') {
+          fullText += n.value;
+        }
+        if (n.children) {
+          n.children.forEach(collectText);
+        }
+      };
+      
+      node.children.forEach(collectText);
+      
+      // 解析訊息
+      const messages = [];
+      const regex = /\[([^\]]+)\]/g;
+      const parts = fullText.split(regex);
+      
+      // parts: ['', 'TNXG|2025-03-11 14:30', '\nmain.py...', 'AriaQwQ|...', '\n內容...']
+      for (let i = 1; i < parts.length; i += 2) {
+        const header = parts[i];
+        const content = parts[i + 1] || '';
+        
+        const headerParts = header.split('|').map(s => s.trim());
+        const name = headerParts[0] || 'Anonymous';
+        const datetime = headerParts[1] || '';
+        const position = (headerParts[2] || 'left').toLowerCase() === 'right' ? 'right' : 'left';
+        
+        const lines = content
+          .split('\n')
+          .map(l => l.trim())
+          .filter(l => l.length > 0);
+        
+        if (lines.length > 0 || name) {
+          messages.push({ name, datetime, position, lines });
+        }
       }
 
       node.type = 'html';
@@ -64,13 +52,12 @@ export function remarkChat() {
 }
 
 function generateChatHtml(messages) {
-  if (messages.length === 0) return '';
+  if (messages.length === 0) return '<p>No messages</p>';
   
   return messages.map(msg => {
-    const positionClass = msg.position === 'right' ? 'right' : 'left';
+    const positionClass = msg.position;
     
     const contentHtml = msg.lines.map(line => {
-      // Check for quote (> at start)
       if (line.startsWith('>') || line.startsWith('＞')) {
         const quoteText = line.replace(/^[>＞]\s*/, '');
         return `<div class="etag-chat-quote">${escapeHtml(quoteText)}</div>`;
@@ -78,11 +65,15 @@ function generateChatHtml(messages) {
       return `<p>${escapeHtml(line)}</p>`;
     }).join('');
 
+    const timeHtml = msg.datetime 
+      ? `<span class="etag-chat-time">${escapeHtml(msg.datetime)}</span>` 
+      : '';
+
     return `<div class="etag-chat ${positionClass}">
-  <div class="etag-chat-content">
-    <div class="etag-chat-author">${escapeHtml(msg.name)}${msg.datetime ? `<span class="etag-chat-time">${escapeHtml(msg.datetime)}</span>` : ''}</div>
-    <div class="etag-chat-message">${contentHtml}</div>
-  </div>
+<div class="etag-chat-content">
+<div class="etag-chat-author">${escapeHtml(msg.name)}${timeHtml}</div>
+<div class="etag-chat-message">${contentHtml}</div>
+</div>
 </div>`;
   }).join('\n');
 }
