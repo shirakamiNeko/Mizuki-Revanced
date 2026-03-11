@@ -34,6 +34,7 @@ import remarkHighlight from "./src/plugins/remark-highlight.js";
 import remarkColoredText from "./src/plugins/remark-colored-text.js";
 import remarkSupersub from "./src/plugins/remark-supersub.js";
 import remarkFurigana from "./src/plugins/remark-furigana.js";
+import remarkChat from "./src/plugins/remark-chat.js";
 
 
 // https://astro.build/config
@@ -138,6 +139,7 @@ export default defineConfig({
 			remarkColoredText,
 			remarkSupersub,
 			remarkFurigana,
+			remarkChat,
 		],
 		rehypePlugins: [
 			rehypeKatex,
