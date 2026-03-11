@@ -2,11 +2,8 @@ import { visit } from 'unist-util-visit';
 
 export function remarkChat() {
   return (tree) => {
-    visit(tree, (node) => {
+    visit(tree, (node, index, parent) => {
       if (node.type === 'containerDirective' && node.name === 'chat') {
-        console.log('=== PROCESSING CHAT ===');
-        console.log('node.type before:', node.type);
-        
         const messages = [];
         let currentMessage = null;
 
@@ -70,14 +67,14 @@ export function remarkChat() {
           return `<div class="chat-message chat-${msg.position}"><div class="chat-bubble"><div class="chat-header"><span class="chat-name">${escapeHtml(msg.name)}</span><span class="chat-date">${escapeHtml(msg.date)}</span></div><div class="chat-content">${contentHtml}</div></div></div>`;
         }).join('');
 
-        node.type = 'html';
-        node.value = `<div class="chat-container" data-v="2">${html}</div>`;
-        delete node.children;
-        delete node.name;
-        delete node.data;
+        // 直接替換成 HTML 節點
+        const htmlNode = {
+          type: 'html',
+          value: `<div class="chat-container">${html}</div>`
+        };
         
-        console.log('node.type after:', node.type);
-        console.log('node.value preview:', node.value.substring(0, 100));
+        parent.children.splice(index, 1, htmlNode);
+        return index; // 不要繼續訪問這個節點
       }
     });
   };
