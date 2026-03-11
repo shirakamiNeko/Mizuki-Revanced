@@ -1,17 +1,12 @@
 import { visit } from 'unist-util-visit';
 
-console.log('=== REMARK-CHAT FILE LOADED ===');
-
 export function remarkChat() {
-  console.log('=== REMARK-CHAT FUNCTION CALLED ===');
   return (tree) => {
-    console.log('=== REMARK-CHAT TRANSFORM START ===');
     visit(tree, (node, index, parent) => {
-      if (node.type === 'containerDirective') {
-        console.log('Found containerDirective:', node.name);
-      }
       if (node.type === 'containerDirective' && node.name === 'chat') {
         console.log('=== FOUND CHAT ===');
+        console.log('Parent:', parent?.type);
+        console.log('Index:', index);
         
         const messages = [];
         let currentMessage = null;
@@ -76,13 +71,17 @@ export function remarkChat() {
           return `<div class="chat-message chat-${msg.position}"><div class="chat-bubble"><div class="chat-header"><span class="chat-name">${escapeHtml(msg.name)}</span><span class="chat-date">${escapeHtml(msg.date)}</span></div><div class="chat-content">${contentHtml}</div></div></div>`;
         }).join('');
 
-        const htmlNode = {
-          type: 'html',
-          value: `<div class="chat-container">${html}</div>`
-        };
+        const finalHtml = `<div class="chat-container">${html}</div>`;
+        console.log('Generated HTML:', finalHtml.substring(0, 300));
+
+        // 直接修改 node 而不是 splice
+        node.type = 'html';
+        node.value = finalHtml;
+        node.children = [];
+        node.name = undefined;
+        node.attributes = undefined;
         
-        parent.children.splice(index, 1, htmlNode);
-        return index;
+        console.log('Node after modification:', node.type, node.value?.substring(0, 100));
       }
     });
   };
