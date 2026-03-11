@@ -131,7 +131,6 @@ export default defineConfig({
 			remarkFixGithubAdmonitions,
 			remarkDirective,
 			remarkSectionize,
-			remarkChat,
 			parseDirectiveNode,
 			remarkMermaid,
 			remarkTabs, // Our custom plugin starts here
@@ -139,6 +138,7 @@ export default defineConfig({
 			remarkColoredText,
 			remarkSupersub,
 			remarkFurigana,
+			remarkChat,
 		],
 		rehypePlugins: [
 			rehypeKatex,
