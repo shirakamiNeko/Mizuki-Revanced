@@ -44,7 +44,7 @@
 .chat-name {
   font-size: 14px;
   font-weight: 600;
-  color: var(--primary);
+  color: var(--chat-name-color, #333);
 }
 
 .chat-date {
@@ -65,8 +65,9 @@
 }
 
 .chat-right .chat-content {
-  background: var(--chat-right-bg, rgba(237, 112, 155, 0.2));
+  background: var(--primary);
   border-radius: 16px 4px 16px 16px;
+  color: white;
 }
 
 .chat-content p {
@@ -89,21 +90,22 @@
 }
 
 .chat-right .chat-content blockquote {
-  border-left-color: rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.1);
+  border-left-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 /* Dark Mode */
+:root.dark .chat-name {
+  color: var(--chat-name-color-dark, #eee);
+}
+
 :root.dark .chat-date {
   color: var(--chat-date-color-dark, #888);
 }
 
 :root.dark .chat-left .chat-content {
   background: var(--chat-left-bg-dark, rgba(255, 255, 255, 0.08));
-}
-
-:root.dark .chat-right .chat-content {
-  background: var(--chat-right-bg-dark, rgba(237, 112, 155, 0.25));
 }
 
 :root.dark .chat-content blockquote {
