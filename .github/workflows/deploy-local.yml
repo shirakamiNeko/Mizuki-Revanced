@@ -28,11 +28,33 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
       
+      - name: Clean cache and backup dist
+        run: |
+          rm -rf .astro node_modules/.astro
+          if [ -d "dist" ]; then
+            rm -rf dist_backup
+            mv dist dist_backup
+          fi
+      
       - name: Build site
+        id: build
         run: pnpm run build
         env:
           ENABLE_CONTENT_SYNC: true
           CONTENT_REPO_URL: ${{ secrets.CONTENT_REPO_URL }}
           USE_SUBMODULE: true
+
+      - name: Cleanup backup on success
+        if: success()
+        run: rm -rf dist_backup
+
+      - name: Restore backup on failure
+        if: failure()
+        run: |
+          rm -rf dist
+          if [ -d "dist_backup" ]; then
+            mv dist_backup dist
+            echo "⚠️ Build failed, restored previous version"
+          fi
 
       # Our Docker Container will automatically serve the lastest files in real time.
