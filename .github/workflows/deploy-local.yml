@@ -33,7 +33,9 @@ jobs:
           rm -rf .astro node_modules/.astro
           if [ -d "dist" ]; then
             rm -rf dist_backup
-            mv dist dist_backup
+            cp dist dist_backup
+            rm -rf dist
+            echo "Existing dist backed up to dist_backup."
           fi
       
       - name: Build site
@@ -48,7 +50,6 @@ jobs:
         if: success()
         run: |
           rm -rf dist_backup
-          sudo docker compose restart
           echo "Build succeeded, backup removed."
 
       - name: Restore backup on failure
@@ -63,5 +64,4 @@ jobs:
           exit 1
 
       # Our Docker Container will automatically serve the lastest files in real time.
-
 
