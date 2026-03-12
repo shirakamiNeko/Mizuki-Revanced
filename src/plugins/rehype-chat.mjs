@@ -100,7 +100,7 @@ export function rehypeChat(properties, children) {
         h("div", { class: "chat-content" }, [
           ...(msg.replyTo ? [
             h("span", { class: "chat-reply-to" }, [
-              h("span", { class: "iconify", "data-icon": "fa6-solid:reply" }),
+              h("iconify-icon", { icon: "fa6-solid:reply" }),
               ` @${msg.replyTo}`
             ])
           ] : []),
