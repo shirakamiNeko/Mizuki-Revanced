@@ -29,12 +29,12 @@ import { rehypeImageWidth } from "./src/plugins/rehype-image-width.mjs";
 import rehypeExternalLinks from "rehype-external-links";
 import { remarkFixGithubAdmonitions } from "./src/plugins/remark-fix-github-admonitions.js";
 import { KeyboardComponent } from "./src/plugins/rehype-component-keyboard.js";
+import { rehypeChat } from "./src/plugins/rehype-chat.mjs";
 import remarkTabs from "./src/plugins/remark-tabs.js";
 import remarkHighlight from "./src/plugins/remark-highlight.js";
 import remarkColoredText from "./src/plugins/remark-colored-text.js";
 import remarkSupersub from "./src/plugins/remark-supersub.js";
 import remarkFurigana from "./src/plugins/remark-furigana.js";
-import remarkChat from "./src/plugins/remark-chat.js";
 
 // https://astro.build/config
 export default defineConfig({
@@ -131,7 +131,6 @@ export default defineConfig({
 			remarkFixGithubAdmonitions,
 			remarkDirective,
 			remarkSectionize,
-			remarkChat,
 			parseDirectiveNode,
 			remarkMermaid,
 			remarkTabs, // Our custom plugin starts here
@@ -157,6 +156,7 @@ export default defineConfig({
 				rehypeComponents,
 				{
 					components: {
+						chat: rehypeChat,
 						github: GithubCardComponent,
 						keyboard: KeyboardComponent,
 						note: (x, y) => AdmonitionComponent(x, y, "note"),

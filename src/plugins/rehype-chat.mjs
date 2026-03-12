@@ -1,0 +1,79 @@
+import { h } from 'hastscript';
+
+export function rehypeChat(element, metadata) {
+  const children = element.children || [];
+  
+  // 提取所有文字內容
+  let textContent = '';
+  const extractText = (nodes) => {
+    for (const node of nodes) {
+      if (node.type === 'text') {
+        textContent += node.value;
+      } else if (node.children) {
+        extractText(node.children);
+      }
+      if (node.tagName === 'p') {
+        textContent += '\n\n';
+      } else if (node.tagName === 'br') {
+        textContent += '\n';
+      }
+    }
+  };
+  extractText(children);
+
+  // 按段落分割（每個消息是一個段落）
+  const paragraphs = textContent.split(/\n\n+/).filter(p => p.trim());
+  const messages = [];
+
+  for (const para of paragraphs) {
+    const lines = para.split('\n').map(l => l.trim()).filter(Boolean);
+    if (lines.length === 0) continue;
+
+    // 第一行應該是 [名字|時間] 或 [名字|時間|right]
+    const headerMatch = lines[0].match(/^\[([^\]]+)\]$/);
+    if (!headerMatch) continue;
+
+    const meta = headerMatch[1];
+    const parts = meta.split('|').map(p => p.trim());
+    
+    const name = parts[0] || 'Unknown';
+    const time = parts[1] || '';
+    const isRight = parts.includes('right');
+    const alignment = isRight ? 'chat-right' : 'chat-left';
+
+    // 剩餘行是內容
+    const contentLines = lines.slice(1);
+    const bubbleContent = [];
+    
+    for (const line of contentLines) {
+      if (line.startsWith('>')) {
+        // 引用
+        bubbleContent.push(
+          h('div', { class: 'chat-quote' }, line.slice(1).trim())
+        );
+      } else {
+        bubbleContent.push(
+          h('div', { class: 'chat-content' }, line)
+        );
+      }
+    }
+
+    messages.push(
+      h('div', { class: `chat-message ${alignment}` }, [
+        h('div', { class: 'chat-header' }, [
+          h('span', { class: 'chat-name' }, name),
+          h('span', { class: 'chat-time' }, time)
+        ]),
+        h('div', { class: 'chat-bubble' }, bubbleContent)
+      ])
+    );
+  }
+
+  if (messages.length === 0) {
+    return h('div', { class: 'chat-container' }, [
+      h('div', { class: 'chat-empty' }, 'No messages')
+    ]);
+  }
+
+  return h('div', { class: 'chat-container' }, messages);
+}
