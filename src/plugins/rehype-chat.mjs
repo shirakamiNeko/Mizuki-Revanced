@@ -8,8 +8,6 @@ import { h } from "hastscript";
  * @returns {import('mdast').Parent} The created chat component.
  */
 export function rehypeChat(properties, children) {
-  console.log("[rehypeChat] called with:", { properties, childrenCount: children?.length });
-  
   if (!Array.isArray(children) || children.length === 0) {
     return h("div", { class: "chat-container chat-empty" }, "No messages");
   }
@@ -32,8 +30,6 @@ export function rehypeChat(properties, children) {
   };
   extractText(children);
 
-  console.log("[rehypeChat] textContent:", textContent);
-
   // 按段落分割
   const paragraphs = textContent.split(/\n\n+/).filter(p => p.trim());
   const messages = [];
@@ -42,11 +38,15 @@ export function rehypeChat(properties, children) {
     const lines = para.split('\n').map(l => l.trim()).filter(Boolean);
     if (lines.length === 0) continue;
 
-    // 第一行應該是 [名字|時間] 或 [名字|時間|right]
-    const headerMatch = lines[0].match(/^\[([^\]]+)\]$/);
-    if (!headerMatch) continue;
+    // 嘗試匹配 [名字|時間] 或 [名字|時間|right] 開頭
+    const headerMatch = lines[0].match(/^\[([^\]]+)\](.*)$/);
+    if (!headerMatch) {
+      // 可能是引用區塊，跳過
+      continue;
+    }
 
     const meta = headerMatch[1];
+    const restOfFirstLine = headerMatch[2]?.trim() || '';
     const parts = meta.split('|').map(p => p.trim());
     
     const name = parts[0] || 'Unknown';
@@ -54,8 +54,13 @@ export function rehypeChat(properties, children) {
     const isRight = parts.includes('right');
     const alignment = isRight ? 'chat-right' : 'chat-left';
 
-    // 剩餘行是內容
-    const contentLines = lines.slice(1);
+    // 收集內容：第一行剩餘部分 + 後續行
+    const contentLines = [];
+    if (restOfFirstLine) {
+      contentLines.push(restOfFirstLine);
+    }
+    contentLines.push(...lines.slice(1));
+
     const bubbleContent = [];
     
     for (const line of contentLines) {
@@ -70,6 +75,9 @@ export function rehypeChat(properties, children) {
         );
       }
     }
+
+    // 如果沒有內容，跳過這條消息
+    if (bubbleContent.length === 0) continue;
 
     messages.push(
       h('div', { class: `chat-message ${alignment}` }, [
