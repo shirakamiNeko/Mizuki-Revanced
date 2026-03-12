@@ -3,16 +3,17 @@ import { h } from "hastscript";
 
 /**
  * 解析聊天消息的 header 行
- * 格式: [username|timestamp] 或 [username|timestamp|right]
+ * 格式: [username|timestamp] 或 [username|timestamp|right] 或 [username|timestamp|position|replyTo]
  */
 function parseChatHeader(text) {
-  const match = text.match(/^\[([^|]+)\|([^|\]]+)(?:\|(\w+))?\]/);
+  const match = text.match(/^\[([^|]+)\|([^|\]]+)(?:\|(\w+))?(?:\|([^\]]+))?\]/);
   if (!match) return null;
   
   return {
     username: match[1].trim(),
     timestamp: match[2].trim(),
-    position: match[3]?.trim() || 'left'
+    position: (match[3] && match[3].trim()) || 'left',
+    replyTo: (match[4] && match[4].trim()) || null
   };
 }
 
@@ -96,7 +97,15 @@ export function rehypeChat(properties, children) {
           h("span", { class: "chat-name" }, msg.username),
           h("span", { class: "chat-date" }, msg.timestamp)
         ]),
-        h("div", { class: "chat-content" }, msg.content)
+        h("div", { class: "chat-content" }, [
+          ...(msg.replyTo ? [
+            h("span", { class: "chat-reply-to" }, [
+              h("span", { class: "iconify", "data-icon": "fa6-solid:reply" }),
+              ` @${msg.replyTo}`
+            ])
+          ] : []),
+          ...msg.content
+        ])
       ])
     ]);
   });
