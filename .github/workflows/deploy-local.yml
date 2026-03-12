@@ -33,7 +33,7 @@ jobs:
           rm -rf .astro node_modules/.astro
           if [ -d "dist" ]; then
             rm -rf dist_backup
-            cp dist dist_backup
+            cp -rf dist dist_backup
             rm -rf dist
             echo "Existing dist backed up to dist_backup."
           fi
