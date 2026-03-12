@@ -28,13 +28,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
       
-      - name: Clean cache and backup dist
+      - name: Clean cache and backup dist, without removing the dist folder itself
         run: |
           rm -rf .astro node_modules/.astro
           if [ -d "dist" ]; then
             rm -rf dist_backup
-            cp -rf dist dist_backup
-            rm -rf dist
+            cp -r dist dist_backup
+            rm -rf dist/*
             echo "Existing dist backed up to dist_backup."
           fi
       
@@ -55,9 +55,10 @@ jobs:
       - name: Restore backup on failure
         if: failure()
         run: |
-          rm -rf dist
+          rm -rf dist/*
           if [ -d "dist_backup" ]; then
-            mv dist_backup dist
+            mv dist_backup/* dist/
+            rm -rf dist_backup
             echo "ERROR: pnpm build failed, usually this is due to a syntax error in the markdown files."
             echo "For safety, the previous dist has been restored. Please check the build logs for details."
           fi
