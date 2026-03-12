@@ -8,6 +8,8 @@ import { h } from "hastscript";
  * @returns {import('mdast').Parent} The created chat component.
  */
 export function rehypeChat(properties, children) {
+  console.log("[rehypeChat] called with:", { properties, childrenCount: children?.length });
+  
   if (!Array.isArray(children) || children.length === 0) {
     return h("div", { class: "chat-container chat-empty" }, "No messages");
   }
@@ -29,6 +31,8 @@ export function rehypeChat(properties, children) {
     }
   };
   extractText(children);
+
+  console.log("[rehypeChat] textContent:", textContent);
 
   // 按段落分割
   const paragraphs = textContent.split(/\n\n+/).filter(p => p.trim());
