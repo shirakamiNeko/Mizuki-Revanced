@@ -397,9 +397,9 @@ export const profileConfig: ProfileConfig = {
 			url: "https://discord.com/users/885756325798227988",
 		},
 		{
-			name: "RSS",
-			icon: "mdi:rss",
-			url: "/rss",
+			name: "Telegram",
+			icon: "fa7-brands:telegram-plane",
+			url: "https://t.me/CodeCrafter404",
 		}
 	],
 };
