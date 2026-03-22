@@ -355,5 +355,5 @@ export const zh_CN: Translation = {
 
 	// Uptime和Update
 	[Key.uptime]: "在线时间检查",
-	[Key.updata]: "更新日志",
+	[Key.updates]: "更新日志",
 };

@@ -331,6 +331,11 @@ export const navBarConfig: NavBarConfig = {
 					icon: "material-symbols:group",
 				},
 				{
+					name: "Updates",
+					url: "/updates/",
+					icon: "mdi:history",
+				},
+				{
 					name: "License",
 					url: "/license/",
 					icon: "mdi:license",
@@ -358,9 +363,9 @@ export const navBarConfig: NavBarConfig = {
 					icon: "material-symbols:timeline",
 				},
 				{
-					name: "Useful Links",
-					url: "/links/",
-					icon: "mdi:web",
+					name: "Uptime",
+					url: "https://uptime.lolicon.io/",
+					icon: "mdi:clock",
 				},
 			],
 		},

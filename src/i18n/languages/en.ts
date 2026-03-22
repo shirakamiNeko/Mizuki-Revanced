@@ -367,6 +367,6 @@ export const en: Translation = {
 	[Key.devtoolsLinkText]: 'View License',
 
 	// Uptime and Update
-	[Key.uptime]: "Uptime Check",
-	[Key.updata]: "Update Log",
+	[Key.uptime]: "Uptime",
+	[Key.updates]: "Update Log",
 };

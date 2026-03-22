@@ -371,5 +371,5 @@ export const ja: Translation = {
 
 	// UptimeとUpdate
 	[Key.uptime]: "稼働時間の確認",
-	[Key.updata]: "更新ログ",
+	[Key.updates]: "更新ログ",
 };

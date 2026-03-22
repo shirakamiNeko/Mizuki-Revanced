@@ -357,5 +357,5 @@ export const zh_TW: Translation = {
 
 	// Uptime and Update
 	[Key.uptime]: "上線時間檢查",
-	[Key.updata]: "更新日誌",
+	[Key.updates]: "更新日誌",
 };

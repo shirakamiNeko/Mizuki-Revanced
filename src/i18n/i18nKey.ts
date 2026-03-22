@@ -346,7 +346,7 @@ enum I18nKey {
 
 	// Uptime and Update
 	uptime = "uptime",
-	updata = "updata",
+	updates = "updates",
 }
 
 export default I18nKey;
