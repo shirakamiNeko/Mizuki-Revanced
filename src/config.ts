@@ -365,6 +365,7 @@ export const navBarConfig: NavBarConfig = {
 				{
 					name: "Uptime",
 					url: "https://uptime.lolicon.io/",
+					external: true,
 					icon: "mdi:clock",
 				},
 			],
