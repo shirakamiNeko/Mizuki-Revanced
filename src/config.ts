@@ -269,7 +269,7 @@ export const navBarConfig: NavBarConfig = {
 			children: [
 				{
 					name: "GitHub",
-					url: "https://github.com/shirakamiNeko/Mizuki-Revanced",
+					url: "https://github.com/Hoshinowo-Yuki/Mizuki-Revanced",
 					external: true,
 					icon: "fa7-brands:github",
 				},
@@ -395,7 +395,7 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "GitHub",
 			icon: "fa7-brands:github",
-			url: "https://github.com/shirakamiNeko",
+			url: "https://github.com/Hoshinowo-Yuki",
 		},
 		{
 			name: "Discord",
