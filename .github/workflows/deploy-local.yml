@@ -38,9 +38,9 @@ jobs:
             echo "Existing dist backed up to dist_backup."
           fi
       
-      - name: Build site
+      - name: Build site with no caches
         id: build
-        run: pnpm run build
+        run: pnpm run build --force
         env:
           ENABLE_CONTENT_SYNC: true
           CONTENT_REPO_URL: ${{ secrets.CONTENT_REPO_URL }}
