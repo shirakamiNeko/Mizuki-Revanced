@@ -59,7 +59,7 @@ export const siteConfig: SiteConfig = {
 		// 顶栏标题图标路径，默认使用 public/assets/home/home.webp
 		icon: "assets/home/home.webp",
 		// 网站Logo图片路径
-		logo: "https://r2.lolicon.io/blog/assets/avatar_512.webp",
+		logo: "assets/home/default-logo.webp",
 	},
 
 	// 页面自动缩放配置
@@ -384,7 +384,7 @@ export const navBarConfig: NavBarConfig = {
 };
 
 export const profileConfig: ProfileConfig = {
-	avatar: "assets/images/avatar.webp", // 相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
+	avatar: "https://r2.lolicon.io/blog/assets/avatar_512.webp", // 相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
 	name: "ホシノ ゆき",
 	bio: "世界は大きい、君は行かなければならない",
 	typewriter: {
