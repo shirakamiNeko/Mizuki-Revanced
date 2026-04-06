@@ -22,6 +22,9 @@ import "../styles/panel-animations.css";
 import AnalyticsScripts from "./partials/AnalyticsScripts.astro";
 import HeadTags from "./partials/HeadTags.astro";
 
+// Inject global CSS variables for Google Fonts
+import { Font } from "astro:assets";
+
 interface Props {
 	title?: string;
 	banner?: string;
@@ -136,6 +139,7 @@ if (siteConfig.font) {
 	}
 	// 添加系统字体作为最终回退
 	fonts.push(
+		"var(--font-lxgw)",  // LXGW WenKai from Google Fonts, loaded via Astro's Font component
 		"system-ui",
 		"-apple-system",
 		"BlinkMacSystemFont",
@@ -161,6 +165,9 @@ if (siteConfig.font) {
 >
 	<head>
 		<meta charset="UTF-8" />
+
+		<!-- Google Fonts -->
+		 <Font cssVariable="--font-lxgw" />
 
 		<!-- 第三方分析脚本 -->
 		<AnalyticsScripts
