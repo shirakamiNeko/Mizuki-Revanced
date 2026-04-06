@@ -363,4 +363,12 @@ export const en: Translation = {
 	[Key.randomPosts]: "Random Posts",
 	[Key.smartRecommend]: "Smart",
 	[Key.randomRecommend]: "Random",
+
+	// DevTools detection
+	[Key.devtoolsMessage]: 'Developer tools are open. Please adhere to the GPL license.',
+	[Key.devtoolsLinkText]: 'View License',
+
+	// Uptime and Update
+	[Key.uptime]: "Uptime",
+	[Key.updates]: "Update Log",
 };

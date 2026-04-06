@@ -366,4 +366,12 @@ export const ja: Translation = {
 	[Key.randomPosts]: "ランダム記事",
 	[Key.smartRecommend]: "スマート",
 	[Key.randomRecommend]: "ランダム",
+
+	// DevTools検出
+	[Key.devtoolsMessage]: '開発者モードが開かれています。GPLライセンスを遵守してください。',
+	[Key.devtoolsLinkText]: 'ブログ声明を見る',
+
+	// UptimeとUpdate
+	[Key.uptime]: "稼働時間の確認",
+	[Key.updates]: "更新ログ",
 };

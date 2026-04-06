@@ -340,6 +340,14 @@ enum I18nKey {
 	randomPosts = "randomPosts",
 	smartRecommend = "smartRecommend",
 	randomRecommend = "randomRecommend",
+
+	// DevTools detection
+	devtoolsMessage = 'devtoolsMessage',
+    devtoolsLinkText = 'devtoolsLinkText',
+
+	// Uptime and Update
+	uptime = "uptime",
+	updates = "updates",
 }
 
 export default I18nKey;

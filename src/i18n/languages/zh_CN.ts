@@ -3,7 +3,7 @@ import type { Translation } from "../translation";
 
 export const zh_CN: Translation = {
 	[Key.home]: "主页",
-	[Key.about]: "关于我们",
+	[Key.about]: "关于我",
 	[Key.archive]: "归档",
 	[Key.search]: "搜索",
 	[Key.other]: "其他",
@@ -350,4 +350,12 @@ export const zh_CN: Translation = {
 	[Key.randomPosts]: "随机文章",
 	[Key.smartRecommend]: "智能推荐",
 	[Key.randomRecommend]: "随机推荐",
+
+	// DevTools检测
+	[Key.devtoolsMessage]: '已打开开发者模式，请谨记GPL协议！',
+	[Key.devtoolsLinkText]: '查看博客声明',
+
+	// Uptime和Update
+	[Key.uptime]: "在线时间检查",
+	[Key.updates]: "更新日志",
 };
