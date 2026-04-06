@@ -279,21 +279,21 @@ export const navBarConfig: NavBarConfig = {
 			children: [
 				{
 					name: "GitHub",
-					url: "https://github.com/LyraVoid/Mizuki",
+					url: "https://github.com/Hoshinowo-Yuki/moe-mizuki",
 					external: true,
 					icon: "fa7-brands:github",
 				},
 				{
-					name: "Bilibili",
-					url: "https://space.bilibili.com/701864046",
+					name: "YouTube",
+					url: "https://www.youtube.com/@KazenotomodachiUwU",
 					external: true,
-					icon: "fa7-brands:bilibili",
+					icon: "mdi:youtube",
 				},
 				{
-					name: "Gitee",
-					url: "https://gitee.com/matsuzakayuki/Mizuki",
+					name: "Threads",
+					url: "https://threads.com/@goldenlight6628",
 					external: true,
-					icon: "mdi:git",
+					icon: "simple-icons:threads",
 				},
 			],
 		},
@@ -319,7 +319,7 @@ export const navBarConfig: NavBarConfig = {
 				},
 				{
 					name: "Devices",
-					url: "/devices/",
+					url: "devices/",
 					icon: "material-symbols:devices",
 					external: false,
 				},
@@ -340,6 +340,16 @@ export const navBarConfig: NavBarConfig = {
 					url: "/friends/",
 					icon: "material-symbols:group",
 				},
+				{
+					name: "Updates",
+					url: "/updates/",
+					icon: "mdi:history",
+				},
+				{
+					name: "License",
+					url: "/license/",
+					icon: "mdi:license",
+				}
 			],
 		},
 		{
@@ -362,6 +372,12 @@ export const navBarConfig: NavBarConfig = {
 					url: "/timeline/",
 					icon: "material-symbols:timeline",
 				},
+				{
+					name: "Uptime",
+					url: "https://uptime.lolicon.io/",
+					external: true,
+					icon: "mdi:clock",
+				},
 			],
 		},
 	],
@@ -369,7 +385,7 @@ export const navBarConfig: NavBarConfig = {
 
 export const profileConfig: ProfileConfig = {
 	avatar: "assets/images/avatar.webp", // 相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
-	name: "まつざか ゆき",
+	name: "ホシノ ゆき",
 	bio: "世界は大きい、君は行かなければならない",
 	typewriter: {
 		enable: true, // 启用个人简介打字机效果
@@ -377,30 +393,30 @@ export const profileConfig: ProfileConfig = {
 	},
 	links: [
 		{
-			name: "Bilibili",
-			icon: "fa7-brands:bilibili",
-			url: "https://space.bilibili.com/701864046",
+			name: "YouTube",
+			icon: "mdi:youtube",
+			url: "https://www.youtube.com/@KazenotomodachiUwU",
 		},
 		{
-			name: "Gitee",
-			icon: "mdi:git",
-			url: "https://gitee.com/matsuzakayuki",
+			name: "Threads",
+			icon: "simple-icons:threads",
+			url: "https://threads.com/@goldenlight6628",
 		},
 		{
 			name: "GitHub",
 			icon: "fa7-brands:github",
-			url: "https://github.com/matsuzaka-yuki",
-		},
-		{
-			name: "Codeberg",
-			icon: "simple-icons:codeberg",
-			url: "https://codeberg.org",
+			url: "https://github.com/Hoshinowo-Yuki",
 		},
 		{
 			name: "Discord",
 			icon: "fa7-brands:discord",
-			url: "https://discord.gg/MqW6TcQtVM",
+			url: "https://discord.com/users/885756325798227988",
 		},
+		{
+			name: "Telegram",
+			icon: "fa7-brands:telegram-plane",
+			url: "https://t.me/CodeCrafter404",
+		}
 	],
 };
 
@@ -686,7 +702,7 @@ export const pioConfig: import("./types/config").PioConfig = {
 		home: "Click here to go back to homepage!", // 首页提示
 		skin: ["Want to see my new outfit?", "The new outfit looks great~"], // 换装提示
 		close: "QWQ See you next time~", // 关闭提示
-		link: "https://github.com/LyraVoid/Mizuki", // 关于链接
+		link: "https://github.com/Hoshinowo-Yuki/moe-mizuki", // 关于链接
 	},
 };
 
