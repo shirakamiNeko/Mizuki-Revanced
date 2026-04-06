@@ -25,6 +25,9 @@ import HeadTags from "./partials/HeadTags.astro";
 // Inject global CSS variables for Google Fonts
 import { Font } from "astro:assets";
 
+// DevTools detection component
+import DevToolsDetect from "@components/widgets/devtools-detect/DevToolsDetect.astro";
+
 interface Props {
 	title?: string;
 	banner?: string;
@@ -239,6 +242,9 @@ if (siteConfig.font) {
 		<!-- Music Player - 核心始终加载（当enable=true），UI通过showFloatingPlayer控制 -->
 		<MusicPlayer client:idle />
 
+		<!-- DevTools detection component -->
+		<DevToolsDetect />
+
 		<!-- Pio 看板娘组件 - 仅在进入视口时加载 -->
 		{pioConfig.enable && <Pio client:visible />}
 
@@ -340,11 +346,6 @@ if (siteConfig.font) {
 <!-- Dynamic title and favicon on tab visibility change -->
 <script>
     import "../scripts/tab-visibility.js";
-</script>
-
-<!-- DevTools detection -->
-<script>
-	import "../scripts/handlers/devtools-detect-handler.ts";
 </script>
 
 <!-- Tabs functionality -->

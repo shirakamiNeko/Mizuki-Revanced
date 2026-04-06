@@ -1,0 +1,160 @@
+---
+/**
+ * DevToolsDetect.astro
+ *
+ * Notification banner triggered by devtools keyboard shortcuts.
+ * HTML/CSS are pre-rendered; JS only toggles visibility classes.
+ *
+ * @props
+ * - autoDismiss: number — auto-hide delay in ms (default 5000)
+ */
+
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+
+interface Props {
+  autoDismiss?: number;
+}
+
+const { autoDismiss = 5000 } = Astro.props;
+
+const message = i18n(I18nKey.devtoolsMessage);
+const linkText = i18n(I18nKey.devtoolsLinkText);
+const linkHref = "/license";
+---
+
+<div id="dev-banner" role="status" data-auto-dismiss={autoDismiss}>
+  <button id="dev-banner-close" aria-label="Dismiss">&times;</button>
+  <span class="dev-banner-message">{message}</span>
+  <a href={linkHref}>{linkText}</a>
+</div>
+
+<script>
+  let controller: AbortController;
+
+  function initDevBanner(): void {
+    controller?.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+
+    const banner = document.getElementById("dev-banner")!;
+    if (!banner) return;
+
+    const autoDismiss = Number(banner.dataset.autoDismiss) || 5000;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    function show(): void {
+      if (timer) clearTimeout(timer);
+      if (!banner.classList.contains("show")) {
+        banner.classList.remove("hide");
+        void banner.offsetHeight;
+        banner.classList.add("show");
+      }
+      timer = setTimeout(hide, autoDismiss);
+    }
+
+    function hide(): void {
+      if (!banner.classList.contains("show")) return;
+      banner.classList.replace("show", "hide");
+      setTimeout(() => banner.classList.remove("hide"), 300);
+      if (timer) { clearTimeout(timer); timer = null; }
+    }
+
+    function isDevToolsKey(e: KeyboardEvent): boolean {
+      if (e.key === "F12") return true;
+      const k = e.key.toLowerCase();
+      if (e.ctrlKey && e.shiftKey && "ijc".includes(k)) return true;
+      if (e.metaKey && e.altKey && k === "i") return true;
+      return false;
+    }
+
+    document.getElementById("dev-banner-close")
+      ?.addEventListener("click", hide, { signal });
+
+    document.addEventListener("keydown", (e) => {
+      if (isDevToolsKey(e)) show();
+    }, { signal });
+  }
+
+  initDevBanner();
+  document.addEventListener("astro:after-swap", initDevBanner);
+</script>
+
+<style>
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to   { transform: translateX(100%); opacity: 0; }
+  }
+
+  #dev-banner {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    max-width: 18.75rem;
+    padding: 0.9375rem 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--line-divider);
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--content-meta);
+    font-size: 0.875rem;
+    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.1);
+    z-index: 99999;
+
+    /* hidden by default — off-screen, invisible, non-interactive */
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+  }
+
+  #dev-banner.show {
+    animation: slideIn 0.3s ease-out forwards;
+    pointer-events: auto;
+  }
+
+  #dev-banner.hide {
+    animation: slideOut 0.3s ease-in forwards;
+    pointer-events: none;
+  }
+
+  .dev-banner-message {
+    margin-right: 1.25rem;
+  }
+
+  #dev-banner a {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--primary);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  #dev-banner a:hover {
+    text-decoration: underline;
+  }
+
+  #dev-banner-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.625rem;
+    background: none;
+    border: none;
+    color: var(--content-meta);
+    font-size: 1.125rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  #dev-banner-close:hover {
+    opacity: 1;
+  }
+</style>
