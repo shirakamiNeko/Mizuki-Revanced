@@ -43,6 +43,7 @@ export interface SiteConfig {
 	lang:
 		| "en"
 		| "zh_CN"
+		| "zh_HK"
 		| "zh_TW"
 		| "ja"
 		| "ko"

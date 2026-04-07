@@ -3,6 +3,7 @@ import type I18nKey from "./i18nKey";
 import { en } from "./languages/en";
 import { ja } from "./languages/ja";
 import { zh_CN } from "./languages/zh_CN";
+import { zh_HK } from "./languages/zh_HK";
 import { zh_TW } from "./languages/zh_TW";
 
 export type Translation = Record<I18nKey, string>;
@@ -15,6 +16,7 @@ const map: Record<string, Translation> = {
 	en_gb: en,
 	en_au: en,
 	zh_cn: zh_CN,
+	zh_HK: zh_HK,
 	zh_tw: zh_TW,
 	ja: ja,
 	ja_jp: ja,
