@@ -360,4 +360,8 @@ export const zh_TW: Translation = {
 	// Uptime and Update
 	[Key.uptime]: "上線時間檢查",
 	[Key.updates]: "更新日誌",
+
+	// Tab visibility component
+	[Key.tabHiddenTitle]: "(´Д｀)瀏覽器崩潰啦",
+	[Key.tabVisibleTitle]: "（●´3｀●）復活成功",
 };

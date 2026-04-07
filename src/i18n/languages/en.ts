@@ -371,4 +371,8 @@ export const en: Translation = {
 	// Uptime and Update
 	[Key.uptime]: "Uptime",
 	[Key.updates]: "Update Log",
+
+	// Tab visibility component
+	[Key.tabHiddenTitle]: "(´Д｀) Where are you going...",
+	[Key.tabVisibleTitle]: "（●´3｀●）Welcome back!",
 };

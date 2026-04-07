@@ -348,6 +348,10 @@ enum I18nKey {
 	// Uptime and Update
 	uptime = "uptime",
 	updates = "updates",
+
+	// Tab visibility component
+	tabHiddenTitle = "tabHiddenTitle",
+	tabVisibleTitle = "tabVisibleTitle",
 }
 
 export default I18nKey;

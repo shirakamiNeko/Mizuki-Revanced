@@ -358,4 +358,8 @@ export const zh_CN: Translation = {
 	// Uptime和Update
 	[Key.uptime]: "在线时间检查",
 	[Key.updates]: "更新日志",
+
+	// Tab可见性组件
+	[Key.tabHiddenTitle]: "(´Д｀)大変だ！",
+	[Key.tabVisibleTitle]: "（●´3｀●）やれやれだぜ",
 };

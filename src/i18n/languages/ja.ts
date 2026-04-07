@@ -374,4 +374,8 @@ export const ja: Translation = {
 	// UptimeとUpdate
 	[Key.uptime]: "稼働時間の確認",
 	[Key.updates]: "更新ログ",
+
+	// タブの可視性
+	[Key.tabHiddenTitle]: "(´Д｀)大変だ！",
+	[Key.tabVisibleTitle]: "（●´3｀●）やれやれだぜ",
 };

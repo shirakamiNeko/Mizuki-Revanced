@@ -28,6 +28,9 @@ import { Font } from "astro:assets";
 // DevTools detection component
 import DevToolsDetect from "@components/widgets/devtools-detect/DevToolsDetect.astro";
 
+// Tab visibility handler component (dynamic title and favicon)
+import TabVisibility from "@components/atoms/Loader/TabVisibility.astro";
+
 interface Props {
 	title?: string;
 	banner?: string;
@@ -242,6 +245,9 @@ if (siteConfig.font) {
 		<!-- Music Player - 核心始终加载（当enable=true），UI通过showFloatingPlayer控制 -->
 		<MusicPlayer client:idle />
 
+		<!-- Dynamic title and favicon on tab visibility change -->
+		<TabVisibility />
+
 		<!-- DevTools detection component -->
 		<DevToolsDetect />
 
@@ -341,11 +347,6 @@ if (siteConfig.font) {
 <!-- 主题切换综合性能优化器（包含代码块优化、重型元素优化、性能诊断） -->
 <script>
 	import "../scripts/theme-optimizer.js";
-</script>
-
-<!-- Dynamic title and favicon on tab visibility change -->
-<script>
-    import "../scripts/tab-visibility.js";
 </script>
 
 <!-- Tabs functionality -->

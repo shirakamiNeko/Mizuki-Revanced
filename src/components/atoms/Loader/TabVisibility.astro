@@ -1,0 +1,62 @@
+---
+/**
+ * TabVisibility.astro
+ *
+ * Changes document title and favicon when the tab loses focus.
+ */
+
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+
+const hiddenTitle = i18n(I18nKey.tabHiddenTitle);
+const visibleTitle = i18n(I18nKey.tabVisibleTitle);
+const hiddenFavicon = "/favicon/failure.ico";
+---
+
+<meta
+  id="tab-visibility-config"
+  data-hidden-title={hiddenTitle}
+  data-visible-title={visibleTitle}
+  data-hidden-favicon={hiddenFavicon}
+  hidden
+/>
+
+<script>
+  let controller: AbortController;
+
+  function initTabVisibility(): void {
+    controller?.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+
+    const cfg = document.getElementById("tab-visibility-config") as HTMLElement | null;
+    if (!cfg) return;
+
+    const hiddenTitle = cfg.dataset.hiddenTitle ?? "(つ﹏⊂)...";
+    const visibleTitle = cfg.dataset.visibleTitle ?? "(●´3｀●)";
+    const hiddenFavicon = cfg.dataset.hiddenFavicon ?? "/favicon/failure.ico";
+
+    const originalTitle = document.title;
+    const favicons = document.querySelectorAll<HTMLLinkElement>('link[rel="icon"]');
+    const originalHrefs = [...favicons].map((link) => link.href);
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        if (timeoutId) { clearTimeout(timeoutId); timeoutId = null; }
+        document.title = hiddenTitle;
+        favicons.forEach((link) => (link.href = hiddenFavicon));
+      } else {
+        document.title = visibleTitle;
+        favicons.forEach((link, i) => (link.href = originalHrefs[i]));
+        timeoutId = setTimeout(() => {
+          document.title = originalTitle;
+          timeoutId = null;
+        }, 1500);
+      }
+    }, { signal });
+  }
+
+  initTabVisibility();
+  document.addEventListener("astro:after-swap", initTabVisibility);
+</script>
