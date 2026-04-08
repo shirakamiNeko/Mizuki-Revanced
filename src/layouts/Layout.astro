@@ -31,6 +31,9 @@ import DevToolsDetect from "@components/widgets/devtools-detect/DevToolsDetect.a
 // Tab visibility handler component (dynamic title and favicon)
 import TabVisibility from "@components/atoms/Loader/TabVisibility.astro";
 
+// Content Tabs
+import ContentTabs from "@components/misc/ContentTabs.astro";
+
 interface Props {
 	title?: string;
 	banner?: string;
@@ -251,6 +254,9 @@ if (siteConfig.font) {
 		<!-- DevTools detection component -->
 		<DevToolsDetect />
 
+		<!-- Content Tabs component -->
+		<ContentTabs />
+
 		<!-- Pio 看板娘组件 - 仅在进入视口时加载 -->
 		{pioConfig.enable && <Pio client:visible />}
 
@@ -349,7 +355,3 @@ if (siteConfig.font) {
 	import "../scripts/theme-optimizer.js";
 </script>
 
-<!-- Tabs functionality -->
-<script>
-  import "../scripts/handlers/tabs-handler.ts";
-</script>
