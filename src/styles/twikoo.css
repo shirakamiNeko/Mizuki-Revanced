@@ -245,3 +245,7 @@ Make the emoji component display correctly when there are too many emoji packs
 html.dark .twikoo select option {
   @apply !text-gray-300 !bg-gray-800;
 }
+
+.tk-admin {
+  @apply !rounded-lg !overflow-hidden;
+}
