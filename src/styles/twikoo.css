@@ -120,6 +120,12 @@ html.dark {
   }
 }
 
+.tk-actions {
+  button {
+    @apply text-(--primary);
+  }
+}
+
 /* Replies */
 .tk-replies {
   .tk-comment {
