@@ -120,9 +120,10 @@ html.dark {
   }
 }
 
+/* Admin Actions, For Each Comment */
 .tk-actions {
   button {
-    @apply text-(--primary);
+    @apply !text-(--primary);
   }
 }
 
