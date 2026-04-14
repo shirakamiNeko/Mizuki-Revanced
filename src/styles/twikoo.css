@@ -239,8 +239,10 @@ Make the emoji component display correctly when there are too many emoji packs
   @apply !text-(--primary)/60 !border-transparent !bg-transparent;
 }
 
-.tk-pagination-pager.__current {
-  @apply !bg-(--primary) !rounded-lg;
+.tk-pagination-pager {
+  &.__current {
+    @apply !bg-(--primary) !rounded-lg;
+  }
 }
 
 .twikoo select option {
