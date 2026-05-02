@@ -112,10 +112,36 @@ export async function GET({
 	const { regular: fontRegular, bold: fontBold } =
 		await fetchNotoSansSCFonts();
 
-	// Avatar + icon: still read from disk (small assets)
-	const avatarBuffer = fs.readFileSync(`./src/${profileConfig.avatar}`);
-	const avatarBase64 = `data:image/png;base64,${avatarBuffer.toString("base64")}`;
+	// Avatar: handle remote URLs, local files, or missing avatar
+	let avatarBase64 = "";
+	if (profileConfig.avatar) {
+		if (profileConfig.avatar.startsWith('http://') || profileConfig.avatar.startsWith('https://')) {
+			try {
+				const avatarResp = await fetch(profileConfig.avatar);
+				if (avatarResp.ok) {
+					const avatarArrayBuffer = await avatarResp.arrayBuffer();
+					// Convert to PNG since satori doesn't support WebP
+					const pngBuffer = await sharp(Buffer.from(avatarArrayBuffer)).png().toBuffer();
+					avatarBase64 = `data:image/png;base64,${pngBuffer.toString("base64")}`;
+				}
+			} catch (err) {
+				throw new Error(`Failed to fetch remote avatar: ${err}`);
+			}
+		} else {
+			try {
+				const avatarBuffer = fs.readFileSync(`./src/${profileConfig.avatar}`);
+				// Convert to PNG in case it's WebP or another unsupported format
+				const pngBuffer = await sharp(avatarBuffer).png().toBuffer();
+				avatarBase64 = `data:image/png;base64,${pngBuffer.toString("base64")}`;
+			} catch (err) {
+				throw new Error(`Failed to read local avatar: ${err}`);
+			}
+		}
+	} else {
+		throw new Error("Avatar configuration is missing");
+	}
 
+	// Icon: still read from disk (small assets)
 	let iconPath = "./public/favicon/favicon.ico";
 	if (siteConfig.favicon.length > 0) {
 		iconPath = `./public${siteConfig.favicon[0].src}`;
